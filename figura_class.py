@@ -7,6 +7,7 @@ class Nave:
         self.color = color
         self.w = w
         self.h = h
+        
 
     def dibujar(self,surface):
         pg.draw.rect(surface,self.color,(self.pos_x,self.pos_y,self.w,self.h))
