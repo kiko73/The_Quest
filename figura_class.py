@@ -26,14 +26,29 @@ class Nave:
         
 
 class Asteroide:
-    def __init__(self,pos_x,pos_y,color=(255,255,255),radio=5):
+    def __init__(self,pos_x,pos_y,color=(255,255,255),w=20,h=20,radio=5,vx=1):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.color = color
+        self.w = w
+        self.h = h
         self.radio = radio
+        self.vx = vx
 
-    def dibujar(self,surface):
+    def dibujarAsteroide1(self,surface):
         pg.draw.circle(surface,self.color,(self.pos_x,self.pos_y),self.radio)
+
+    def dibujarAsteroide2(self,surface):
+        pg.draw.rect(surface,self.color,(self.pos_x,self.pos_y,self.w,self.h))
+
+
+    def mover(self,xmax=1300):
+        self.pos_x += self.vx
+        
+        if self.pos_x == xmax or self.pos_x == 0:
+            self.vx = self.vx-1
+
+        
     
         
     
