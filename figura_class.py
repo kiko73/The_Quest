@@ -42,11 +42,16 @@ class Asteroide:
         pg.draw.rect(surface,self.color,(self.pos_x,self.pos_y,self.w,self.h))
 
 
-    def mover(self,xmax=1300):
-        self.pos_x += self.vx
+    def mover(self, X_MAX=1300):
+        self.pos_x -= self.vx
+
+        if self.pos_x >= X_MAX + (2*self.radio) or self.pos_x <=0:
+            self.pos_x = 1300
+            self.vx *=-1
+
+
         
-        if self.pos_x == xmax or self.pos_x == 0:
-            self.vx = self.vx-1
+        
 
         
     
