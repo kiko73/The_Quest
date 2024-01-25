@@ -15,6 +15,7 @@ nave = Nave(10, 350 - (60//2))
 
 game_over = True
 
+
 lista_asteroides1=[]
 lista_asteroides2=[]
 for i in range(1,6):
@@ -33,18 +34,26 @@ while game_over:
 
 
    pantalla_principal.fill((25, 27, 18 ))
-
-   for asteroides in lista_asteroides1:
-      asteroides.mover()
-      asteroides.dibujarAsteroide1(pantalla_principal)
+   
+   for asteroides1 in lista_asteroides1:
+      asteroides1.mover()
+      asteroides1.dibujarAsteroide1(pantalla_principal)
 
    for asteroides2 in lista_asteroides2:
       asteroides2.mover()
       asteroides2.dibujarAsteroide2(pantalla_principal)
+
+   nave.dibujar(pantalla_principal)
    
    nave.mover(pg.K_UP,pg.K_DOWN)
+   """""
+   if asteroides1.izquierda and asteroides2.izquierda >= nave.derecha:
+      asteroides1.vx*= -1
+      asteroides2.vx*= -1
+   """
    
-   nave.dibujar(pantalla_principal)
+   
+   asteroides1.mostrar_marcador(pantalla_principal)
    
    pg.display.flip()
    

@@ -17,11 +17,29 @@ class Nave:
     def mover(self,teclado_arriba,teclado_abajo):
         estado_teclado = pg.key.get_pressed()
 
-        if estado_teclado[teclado_arriba] == True and self.pos_y >= 0+(self.h//2):
+        if estado_teclado[teclado_arriba] == True and self.pos_y >= 0<=(self.h):
             self.pos_y -= 1
         
-        if estado_teclado[teclado_abajo] == True and self.pos_y <= 700-(self.h//2):
+        if estado_teclado[teclado_abajo] == True and self.pos_y <= 700-(self.h):
             self.pos_y += 1
+    @property
+    def derecha(self):
+        return self.pos_x + self.w//2
+    
+    @property
+    def izquierda(self):
+        return self.pos_x - self.w//2
+    
+    @property
+    def arriba(self):
+        return self.pos_y - self.h//2
+    
+    @property
+    def abajo(self):
+        return self.pos_y + self.h//2
+    
+    
+
         
         
 
@@ -34,6 +52,8 @@ class Asteroide:
         self.h = h
         self.radio = radio
         self.vx = vx
+        self.contadorTiempo = 0
+        self.contadorVidas = 0
 
     def dibujarAsteroide1(self,surface):
         pg.draw.circle(surface,self.color,(self.pos_x,self.pos_y),self.radio)
@@ -45,9 +65,39 @@ class Asteroide:
     def mover(self, X_MAX=1300):
         self.pos_x -= self.vx
 
-        if self.pos_x >= X_MAX + (2*self.radio) or self.pos_x <=0:
+        if self.pos_x >= X_MAX + (10*self.radio) or self.pos_x <=0:
             self.pos_x = 1300
             self.vx *=-1
+
+    def mostrar_marcador(self,pantalla):
+        fuente = pg.font.Font(None,30)
+        marcador1 = fuente.render(str(self.contadorTiempo),True,(255,255,255))
+        marcador2 = fuente.render(str(self.contadorVidas),True,(255,255,255))
+        pantalla.blit(marcador1,(20,20))
+        pantalla.blit(marcador2,(50,20))
+
+    @property
+    def derecha(self):
+        return self.pos_x + self.radio
+    
+    @property
+    def izquierda(self):
+        return self.pos_x - self.radio
+    
+    @property
+    def arriba(self):
+        return self.pos_y - self.radio
+    
+    @property
+    def abajo(self):
+        return self.pos_y + self.radio
+
+    
+
+     
+
+
+
 
 
         
