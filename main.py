@@ -16,12 +16,11 @@ nave = Nave(10, 350 - (60//2))
 game_over = True
 
 
-lista_asteroides1=[]
-lista_asteroides2=[]
-for i in range(1,6):
-   lista_asteroides1.append(Asteroide(ra.randint(0,1200),ra.randint(0,600),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),radio=ra.randint(10,40)))
-for i in range(1,6):
-   lista_asteroides2.append(Asteroide(ra.randint(0,1200),ra.randint(0,600),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),w=ra.randint(20,60),h=ra.randint(20,60)))
+lista_asteroides=[]
+
+for i in range(1,12):
+   lista_asteroides.append(Asteroide(ra.randint(0,1200),ra.randint(0,600),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),radio=ra.randint(10,40)))
+
 
 while game_over:
 
@@ -31,29 +30,31 @@ while game_over:
    for evento in pg.event.get():
       if evento.type == pg.QUIT:
          game_over = False
-
+    
 
    pantalla_principal.fill((25, 27, 18 ))
-   
-   for asteroides1 in lista_asteroides1:
-      asteroides1.mover()
-      asteroides1.dibujarAsteroide1(pantalla_principal)
-
-   for asteroides2 in lista_asteroides2:
-      asteroides2.mover()
-      asteroides2.dibujarAsteroide2(pantalla_principal)
-
    nave.dibujar(pantalla_principal)
+
    
+   
+   for asteroides in (lista_asteroides):
+      asteroides.mover()
+      asteroides.dibujarAsteroide(pantalla_principal)
+      
+      if asteroides.izquierda <= nave.derecha and\
+         asteroides.derecha >= nave.izquierda and\
+         asteroides.abajo >= nave.arriba and\
+         asteroides.arriba <= nave.abajo:
+            asteroides.vx*= 0
+        
+
+   
+   asteroides.comprobar_choque(nave)
+   asteroides.mostrar_marcador(pantalla_principal)
+
    nave.mover(pg.K_UP,pg.K_DOWN)
-   """""
-   if asteroides1.izquierda and asteroides2.izquierda >= nave.derecha:
-      asteroides1.vx*= -1
-      asteroides2.vx*= -1
-   """
+
    
-   
-   asteroides1.mostrar_marcador(pantalla_principal)
    
    pg.display.flip()
    

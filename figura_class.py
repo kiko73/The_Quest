@@ -37,9 +37,6 @@ class Nave:
     @property
     def abajo(self):
         return self.pos_y + self.h//2
-    
-    
-
         
         
 
@@ -54,12 +51,10 @@ class Asteroide:
         self.vx = vx
         self.contadorTiempo = 0
         self.contadorVidas = 0
+        
 
-    def dibujarAsteroide1(self,surface):
+    def dibujarAsteroide(self,surface):
         pg.draw.circle(surface,self.color,(self.pos_x,self.pos_y),self.radio)
-
-    def dibujarAsteroide2(self,surface):
-        pg.draw.rect(surface,self.color,(self.pos_x,self.pos_y,self.w,self.h))
 
 
     def mover(self, X_MAX=1300):
@@ -91,6 +86,15 @@ class Asteroide:
     @property
     def abajo(self):
         return self.pos_y + self.radio
+    
+
+    def comprobar_choque(self,nave):
+        
+        if self.izquierda <= nave.derecha and\
+            self.derecha >= nave.izquierda and\
+            self.abajo >= nave.arriba and\
+            self.arriba <= nave.abajo:
+                self.vx*= 0
 
     
 
