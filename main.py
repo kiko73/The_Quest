@@ -1,5 +1,5 @@
 import pygame as pg
-from figura_class import Asteroide,Nave
+from figura_class import Asteroide,Nave,Planeta
 import random as ra
 
 pg.init()
@@ -12,6 +12,7 @@ pg.display.set_caption("The Quest")
 tasa_refresco = pg.time.Clock()
 
 nave = Nave(10, 350 - (60//2))
+planeta = Planeta(1300,350)
 
 game_over = True
 
@@ -19,7 +20,9 @@ game_over = True
 lista_asteroides=[]
 
 for i in range(1,12):
-   lista_asteroides.append(Asteroide(ra.randint(0,1200),ra.randint(0,600),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),radio=ra.randint(10,40)))
+   lista_asteroides.append(Asteroide(ra.randint(0,1200),ra.randint(0,600),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),radio=ra.randint(20,40)))
+
+
 
 
 while game_over:
@@ -34,6 +37,8 @@ while game_over:
 
    pantalla_principal.fill((25, 27, 18 ))
    nave.dibujar(pantalla_principal)
+   planeta.dibujarPlaneta(pantalla_principal)
+   
 
    
    

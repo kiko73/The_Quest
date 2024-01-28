@@ -97,6 +97,23 @@ class Asteroide:
                 self.vx*= 0
 
     
+            
+
+class Planeta():
+    def __init__(self,pos_x,pos_y,color=(255,255,255),w=20,h=20,radio=300):
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.color = color
+        self.w = w
+        self.h = h
+        self.radio = radio
+
+    def dibujarPlaneta(self,surface):
+        pg.draw.circle(surface,self.color,(self.pos_x,self.pos_y),self.radio)
+    
+
+
+    
 
      
 
