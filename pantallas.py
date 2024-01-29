@@ -3,11 +3,6 @@ from questapp.figura_class import Asteroide,Nave,Planeta
 import random as ra
 from questapp.utils import*
 
-ANCHO = 1300
-ALTO = 700
-COLOR_NAVE = (255,255,255)
-COLOR_FONDO = (25, 27, 18 )
-COLOR_BLANCO = (255,255,255)
 
 
 class Partida:
@@ -19,7 +14,7 @@ class Partida:
 
         self.nave = Nave(10, ALTO//2 - (60//2))
         self.planeta = Planeta(ANCHO,ALTO//2)
-        self.fuente = pg.font.Font(None,30)
+        self.fuente = pg.font.Font("questapp/fonts/Orbitron.ttf",30)
         self.contadorTiempo = 0
         self.contadorVidas = 0
         self.lista_asteroides=[]
@@ -69,15 +64,14 @@ class Partida:
         pg.quit()
 
     def mostrar_juego(self):
-        tiempo = self.fuente.render("Tiempo",True,(135, 19, 238))
-        punto = self.fuente.render("Puntos",True,(135, 19, 238))
+        tiempo = self.fuente.render("Tiempo",True,COLOR_MORADO)
+        punto = self.fuente.render("Puntos",True,COLOR_MORADO)
         self.pantalla_principal.blit(tiempo,(20,20))
         self.pantalla_principal.blit(punto,(170,20))
 
     def mostrar_marcador(self):
-        self.fuente = pg.font.Font(None,30)
-        marcador1 = self.fuente.render(str(self.contadorTiempo),True,(149, 14, 3))
-        marcador2 = self.fuente.render(str(self.contadorVidas),True,(149, 14, 3))
+        marcador1 = self.fuente.render(str(self.contadorTiempo),True,COLOR_ROJO)
+        marcador2 = self.fuente.render(str(self.contadorVidas),True,COLOR_ROJO)
         self.pantalla_principal.blit(marcador1,(50,50))
         self.pantalla_principal.blit(marcador2,(200,50))
 

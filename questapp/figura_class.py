@@ -2,7 +2,7 @@ import pygame as pg
 from .utils import*
 
 class Nave:
-    def __init__(self, pos_x,pos_y,color=(255,255,255),w=60,h=60,vx=1,vy=1):
+    def __init__(self, pos_x,pos_y,color=COLOR_NAVE,w=60,h=60,vx=1,vy=1):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.color = color
@@ -42,7 +42,7 @@ class Nave:
         
 
 class Asteroide:
-    def __init__(self,pos_x,pos_y,color=(255,255,255),w=20,h=20,radio=5,vx=1):
+    def __init__(self,pos_x,pos_y,color=COLOR_BLANCO,w=20,h=20,radio=5,vx=1):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.color = color
@@ -61,7 +61,7 @@ class Asteroide:
         self.pos_x -= self.vx
 
         if self.pos_x >= X_MAX + (10*self.radio) or self.pos_x <=0:
-            self.pos_x = 1300
+            self.pos_x =ANCHO
             self.vx *=-1
 
     
@@ -95,7 +95,7 @@ class Asteroide:
             
 
 class Planeta():
-    def __init__(self,pos_x,pos_y,color=(255,255,255),w=20,h=20,radio=300):
+    def __init__(self,pos_x,pos_y,color=COLOR_BLANCO,w=20,h=20,radio=300):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.color = color
