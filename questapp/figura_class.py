@@ -1,4 +1,5 @@
 import pygame as pg
+from .utils import*
 
 class Nave:
     def __init__(self, pos_x,pos_y,color=(255,255,255),w=60,h=60,vx=1,vy=1):
@@ -49,8 +50,7 @@ class Asteroide:
         self.h = h
         self.radio = radio
         self.vx = vx
-        self.contadorTiempo = 0
-        self.contadorVidas = 0
+        
         
 
     def dibujarAsteroide(self,surface):
@@ -64,12 +64,7 @@ class Asteroide:
             self.pos_x = 1300
             self.vx *=-1
 
-    def mostrar_marcador(self,pantalla):
-        fuente = pg.font.Font(None,30)
-        marcador1 = fuente.render(str(self.contadorTiempo),True,(255,255,255))
-        marcador2 = fuente.render(str(self.contadorVidas),True,(255,255,255))
-        pantalla.blit(marcador1,(20,20))
-        pantalla.blit(marcador2,(50,20))
+    
 
     @property
     def derecha(self):
