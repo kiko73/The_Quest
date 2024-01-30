@@ -51,7 +51,7 @@ class Asteroide:
         self.radio = radio
         self.vx = vx
         
-        
+    
 
     def dibujarAsteroide(self,surface):
         pg.draw.circle(surface,self.color,(self.pos_x,self.pos_y),self.radio)
