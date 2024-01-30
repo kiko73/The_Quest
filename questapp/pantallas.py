@@ -4,7 +4,6 @@ import random as ra
 from questapp.utils import*
 
 
-
 class Partida:
     def __init__(self):
         pg.init()
@@ -14,97 +13,72 @@ class Partida:
 
         self.nave = Nave(10, ALTO//2 - (60//2))
         self.planeta = Planeta(ANCHO,ALTO//2)
-        self.asteroides =[] 
-        #self.lista_asteroides=[]
+        self.asteroides = []
+        
+        
 
         for i in range(1,12):
-
             self.asteroides.append(Asteroide(ra.randint(0,1200),ra.randint(0,600),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),radio=ra.randint(20,40)))
-        
-        self.fuente = pg.font.Font("questapp/fonts/Orbitron.ttf",30)
-        self.contadorTiempo = TIEMPO_JUEGO
-        self.contadorVidas = 0
-        self.game_over = True
 
-    
-        
+        self.fuente = pg.font.Font(None,30)
+        self.contadorTiempo = 0
+        self.contadorVidas = 0
     
     def bucle_fotograma(self):
-        
-        while self.game_over:
+        game_over = True
+        while game_over:
             self.valor_tasa = self.tasa_refresco.tick(350)
-            self.contadorTiempo = self.contadorTiempo - self.valor_tasa
 
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    self.game_over = False
-
-            self.fin_de_juego()
+                    game_over = False
 
             self.pantalla_principal.fill( COLOR_FONDO)
             self.nave.dibujar(self.pantalla_principal)
             self.planeta.dibujarPlaneta(self.pantalla_principal)
             self.mostrar_juego()
 
-            self.nave.mover(pg.K_UP,pg.K_DOWN)
             
             
-            for asteroides in self.asteroides:
+            for asteroides in (self.asteroides):
                 asteroides.mover()
                 asteroides.dibujarAsteroide(self.pantalla_principal)
-                """
-                if (asteroides.izquierda <= self.nave.derecha and\
+                
+                if asteroides.izquierda <= self.nave.derecha and\
                     asteroides.derecha >= self.nave.izquierda and\
                     asteroides.abajo >= self.nave.arriba and\
-                    asteroides.arriba <= self.nave.abajo):
-                        self.asteroides.vx*= 0
-                 """   
+                    asteroides.arriba <= self.nave.abajo:
+                        asteroides.vx*= 0
+                    
 
             
             asteroides.comprobar_choque(self.nave)
-            #asteroides.mostrar_marcador()
-
-        self.mostrar_contadorTiempo()
-
             
+            self.nave.mover(pg.K_UP,pg.K_DOWN)
 
             
             
-        pg.display.flip()
+            pg.display.flip()
    
          
 
         pg.quit()
 
     def mostrar_juego(self):
-        tiempo = self.fuente.render("Tiempo",True,COLOR_MORADO)
-        punto = self.fuente.render("Puntos",True,COLOR_MORADO)
+        self.fuente = pg.font.Font(None,30)
+        tiempo = self.fuente.render("Tiempo",True,(COLOR_MORADO))
+        punto = self.fuente.render("Puntos",True,(COLOR_MORADO))
         self.pantalla_principal.blit(tiempo,(20,20))
         self.pantalla_principal.blit(punto,(170,20))
-
-    def mostrar_marcador(self):
-        marcador1 = self.fuente.render(str(self.contadorTiempo),True,COLOR_ROJO)
-        marcador2 = self.fuente.render(str(self.contadorVidas),True,COLOR_ROJO)
+        marcador1 = self.fuente.render(str(self.contadorTiempo),True,(COLOR_BLANCO))
+        marcador2 = self.fuente.render(str(self.contadorVidas),True,(COLOR_BLANCO))
         self.pantalla_principal.blit(marcador1,(50,50))
         self.pantalla_principal.blit(marcador2,(200,50))
+    
+    
+    
+    
 
-    def fin_de_juego(self):
-
-        if self.contadorTiempo <=0:
-            print("game over")
-            self.game_over = False
-        """
-        if self.asteroides.izquierda <= self.nave.derecha and\
-            self.asteroides.derecha >= self.nave.izquierda and\
-            self.asteroides.abajo >= self.nave.arriba and\
-            self.asteroides.arriba <= self.nave.abajo:
-            self.game_over = False
-            print("game over")
-        """
-
-    def mostrar_contadorTiempo(self):
-        tiempo_juego = self.fuente.render(str( int( self.contadorTiempo/1000)),True,COLOR_ROJO)
-        self.pantalla_principal.blit(tiempo_juego,(400,20))
 
 
 

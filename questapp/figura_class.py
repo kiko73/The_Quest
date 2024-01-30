@@ -65,6 +65,8 @@ class Asteroide:
             self.vx *=-1
 
     
+        
+        
 
     @property
     def derecha(self):
