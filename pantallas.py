@@ -14,46 +14,55 @@ class Partida:
 
         self.nave = Nave(10, ALTO//2 - (60//2))
         self.planeta = Planeta(ANCHO,ALTO//2)
-        self.fuente = pg.font.Font("questapp/fonts/Orbitron.ttf",30)
-        self.contadorTiempo = 0
-        self.contadorVidas = 0
         self.lista_asteroides=[]
 
         for i in range(1,12):
+
             self.lista_asteroides.append(Asteroide(ra.randint(0,1200),ra.randint(0,600),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),radio=ra.randint(20,40)))
+        
+        self.fuente = pg.font.Font("questapp/fonts/Orbitron.ttf",30)
+        self.contadorTiempo = TIEMPO_JUEGO
+        self.contadorVidas = 0
+        self.game_over = True
+        
     
     def bucle_fotograma(self):
-        game_over = True
-        while game_over:
+        
+        while self.game_over:
             self.valor_tasa = self.tasa_refresco.tick(350)
+            self.contadorTiempo = self.contadorTiempo - self.valor_tasa
 
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    game_over = False
+                    self.game_over = False
+
+            self.fin_de_juego()
 
             self.pantalla_principal.fill( COLOR_FONDO)
             self.nave.dibujar(self.pantalla_principal)
             self.planeta.dibujarPlaneta(self.pantalla_principal)
             self.mostrar_juego()
 
+            self.nave.mover(pg.K_UP,pg.K_DOWN)
             
             
-            for asteroides in (self.lista_asteroides):
-                asteroides.mover()
-                asteroides.dibujarAsteroide(self.pantalla_principal)
+            for self.asteroides in (self.lista_asteroides):
+                self.asteroides.mover()
+                self.asteroides.dibujarAsteroide(self.pantalla_principal)
                 
-                if asteroides.izquierda <= self.nave.derecha and\
-                    asteroides.derecha >= self.nave.izquierda and\
-                    asteroides.abajo >= self.nave.arriba and\
-                    asteroides.arriba <= self.nave.abajo:
-                        asteroides.vx*= 0
+                if self.asteroides.izquierda <= self.nave.derecha and\
+                    self.asteroides.derecha >= self.nave.izquierda and\
+                    self.asteroides.abajo >= self.nave.arriba and\
+                    self.asteroides.arriba <= self.nave.abajo:
+                        self.asteroides.vx*= 0
                     
 
             
-            asteroides.comprobar_choque(self.nave)
-            asteroides.mostrar_marcador(self.pantalla_principal)
+            self.asteroides.comprobar_choque(self.nave)
+            self.asteroides.mostrar_marcador()
+            self.mostrar_contadorTiempo()
 
-            self.nave.mover(pg.K_UP,pg.K_DOWN)
+            
 
             
             
@@ -74,6 +83,27 @@ class Partida:
         marcador2 = self.fuente.render(str(self.contadorVidas),True,COLOR_ROJO)
         self.pantalla_principal.blit(marcador1,(50,50))
         self.pantalla_principal.blit(marcador2,(200,50))
+
+    def fin_de_juego(self):
+
+        if self.contadorTiempo <=0:
+            print("game over")
+            self.game_over = False
+
+        if self.asteroides.izquierda <= self.nave.derecha and\
+            self.asteroides.derecha >= self.nave.izquierda and\
+            self.asteroides.abajo >= self.nave.arriba and\
+            self.asteroides.arriba <= self.nave.abajo:
+            self.game_over = False
+            print("game over")
+
+
+    def mostrar_contadorTiempo(self):
+        tiempo_juego = self.fuente.render(str( int( self.contadorTiempo/1000)),True,COLOR_ROJO)
+        self.pantalla_principal.blit(tiempo_juego,(400,20))
+
+
+
 
     
 
