@@ -20,25 +20,30 @@ class Partida:
         for i in range(1,12):
             self.asteroides.append(Asteroide(ra.randint(0,1200),ra.randint(0,600),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),radio=ra.randint(20,40)))
 
-        self.fuente = pg.font.Font(None,30)
+        self.fuente = pg.font.Font("questapp/fonts/Orbitron.ttf",30)
         self.contadorTiempo = 0
-        self.contadorVidas = 0
-    
-    def bucle_fotograma(self):
-        game_over = True
-        while game_over:
-            self.valor_tasa = self.tasa_refresco.tick(350)
+        self.contadorPuntos = 0
+        self.temporizador = TIEMPO_JUEGO
+        self.game_over = True
+        
+        
 
+    def bucle_fotograma(self):
+
+        while self.game_over:
+            self.valor_tasa = self.tasa_refresco.tick(350)
+            self.temporizador = self.temporizador - self.valor_tasa
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    game_over = False
+                    self.game_over = False
 
+            self.fin_de_juego()
+                
             self.pantalla_principal.fill( COLOR_FONDO)
             self.nave.dibujar(self.pantalla_principal)
             self.planeta.dibujarPlaneta(self.pantalla_principal)
             self.mostrar_juego()
 
-            
             
             for asteroides in (self.asteroides):
                 asteroides.mover()
@@ -53,7 +58,7 @@ class Partida:
 
             
             asteroides.comprobar_choque(self.nave)
-            
+            self.mostrar_marcador()
             self.nave.mover(pg.K_UP,pg.K_DOWN)
 
             
@@ -65,16 +70,38 @@ class Partida:
         pg.quit()
 
     def mostrar_juego(self):
-        self.fuente = pg.font.Font(None,30)
         tiempo = self.fuente.render("Tiempo",True,(COLOR_MORADO))
         punto = self.fuente.render("Puntos",True,(COLOR_MORADO))
         self.pantalla_principal.blit(tiempo,(20,20))
         self.pantalla_principal.blit(punto,(170,20))
+        
+
+    def mostrar_marcador(self):
         marcador1 = self.fuente.render(str(self.contadorTiempo),True,(COLOR_BLANCO))
-        marcador2 = self.fuente.render(str(self.contadorVidas),True,(COLOR_BLANCO))
-        self.pantalla_principal.blit(marcador1,(50,50))
-        self.pantalla_principal.blit(marcador2,(200,50))
+        marcador2 = self.fuente.render(str(self.contadorPuntos),True,(COLOR_BLANCO))
+        self.pantalla_principal.blit(marcador1,(60,60))
+        self.pantalla_principal.blit(marcador2,(210,60))
+
+    def fin_de_juego(self):
+        
+        if self.temporizador <= 0:
+            print("game over")
+            self.game_over = False
+            print(self.temporizador)
+
+        
+
+        
+
+
+
+        
+
+
     
+                
+
+        
     
     
     
