@@ -2,7 +2,7 @@ import pygame as pg
 from .utils import*
 
 class Nave:
-    def __init__(self, pos_x,pos_y,color=COLOR_NAVE,w=60,h=60,vx=1,vy=1):
+    def __init__(self, pos_x,pos_y,color=COLOR_NAVE,w=80,h=60,vx=1,vy=1):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.color = color
@@ -23,6 +23,7 @@ class Nave:
         
         if estado_teclado[teclado_abajo] == True and self.pos_y <= 700-(self.h):
             self.pos_y += 1
+
     @property
     def derecha(self):
         return self.pos_x + self.w//2
@@ -56,10 +57,10 @@ class Asteroide:
         pg.draw.circle(surface,self.color,(self.pos_x,self.pos_y),self.radio)
 
 
-    def mover(self, X_MAX=1300):
+    def mover(self, X_MAX=1400):
         self.pos_x -= self.vx
 
-        if self.pos_x >= X_MAX + (10*self.radio) or self.pos_x <=0:
+        if self.pos_x >= X_MAX + (self.radio) or self.pos_x <=0:
             self.pos_x =ANCHO
             self.vx *=-1 
         

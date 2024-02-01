@@ -16,7 +16,7 @@ class Partida:
         self.asteroides = []
         
         for i in range(1,12):
-            self.asteroides.append(Asteroide(ra.randint(100,1300),ra.randint(0,600),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),radio=ra.randint(20,40)))
+            self.asteroides.append(Asteroide(ra.randint(10,1300),ra.randint(0,700),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),radio=ra.randint(20,40)))
 
         self.fuente = pg.font.Font("questapp/fonts/Orbitron.ttf",30)
         self.contadorTiempo = 0
@@ -46,21 +46,24 @@ class Partida:
             self.planeta.dibujarPlaneta(self.pantalla_principal)
             self.mostrar_juego()
 
-            if self.temporizador >0:
-                for asteroides in (self.asteroides):
-                    asteroides.mover()
-                    asteroides.dibujarAsteroide(self.pantalla_principal)
-                    
+            
+            for asteroides in (self.asteroides):
+                asteroides.mover()
+                asteroides.dibujarAsteroide(self.pantalla_principal)
+
+                if self.temporizador >0:
                     if asteroides.izquierda <= self.nave.derecha and\
                         asteroides.derecha >= self.nave.izquierda and\
                         asteroides.abajo >= self.nave.arriba and\
                         asteroides.arriba <= self.nave.abajo:
                             self.game_over = False
-                            asteroides.vx*= 0
+                            asteroides.vx*= 1
+            
+                
                             
             if self.aparecer_planeta:
                 if self.planeta.pos_x > ANCHO:
-                    self.planeta.pos_x -= 1
+                    self.planeta.pos_x -= 0.5
 
             if self.temporizador <= 0:
                 self.aparecer_planeta = True
@@ -79,11 +82,7 @@ class Partida:
 
         pg.quit()
 
-    def mostrar_juego(self):
-        tiempo = self.fuente.render("Tiempo",True,(COLOR_MORADO))
-        punto = self.fuente.render("Puntos",True,(COLOR_MORADO))
-        self.pantalla_principal.blit(tiempo,(20,20))
-        self.pantalla_principal.blit(punto,(170,20))
+    
         
 
     def mostrar_marcador(self):
@@ -92,35 +91,53 @@ class Partida:
         self.pantalla_principal.blit(marcador1,(60,60))
         self.pantalla_principal.blit(marcador2,(210,60))
 
-    
+    def mostrar_juego(self):
+        tiempo = self.fuente.render("Tiempo",True,(COLOR_MORADO))
+        punto = self.fuente.render("Puntos",True,(COLOR_MORADO))
+        self.pantalla_principal.blit(tiempo,(20,20))
+        self.pantalla_principal.blit(punto,(170,20))
 
     def fin_de_juego(self):
-        if self.temporizador <= 0 - 10000:
+        if self.temporizador <= 0 - 5000:
             self.game_over = False
-
+                
     
     def velocidad_juego(self):
         if self.temporizador <=30000:
             self.valor_tasa = self.valor_tasa + self.valor_tasa
 
     def puntuacion(self):
-        if self.temporizador >= -1000:
-            self.contadorPuntos += 1
-
+        multiplicador = 1
         if self.temporizador <=30000:
-            self.contadorPuntos += 1*2
-
+            multiplicador = 2
         if self.temporizador <=15000:
-            self.contadorPuntos += 1*4
-
+            multiplicador = 4
         if self.temporizador < 0:
-            self.contadorPuntos += 1*10
+            multiplicador = 10
+
+        self.contadorPuntos += multiplicador * 1
     
     def aterrizaje(self):
         if self.temporizador <= 0:
-            self.nave.pos_x = 10 
-            self.nave.pos_y = 350
-            self.nave.vx += 1
+            centro_x = 920
+            centro_y = 350
+            velocidad_movimiento = 0.1
+
+            if self.nave.pos_x < centro_x:
+                self.nave.pos_x += velocidad_movimiento * self.valor_tasa
+            elif self.nave.pos_x > centro_x:
+                self.nave.pos_x -= velocidad_movimiento * self.valor_tasa
+
+            if self.nave.pos_y < centro_y:
+                self.nave.pos_y += velocidad_movimiento * self.valor_tasa
+            elif self.nave.pos_y > centro_y:
+                self.nave.pos_y -= velocidad_movimiento * self.valor_tasa
+            
+
+            
+            
+                  
+            
     
     
          
