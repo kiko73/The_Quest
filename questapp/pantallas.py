@@ -23,6 +23,7 @@ class Partida:
         self.contadorPuntos = 0
         self.temporizador = TIEMPO_JUEGO
         self.game_over = True
+        self.aparecer_planeta = False
         
         
 
@@ -38,6 +39,7 @@ class Partida:
             self.puntuacion()
             self.velocidad_juego()
             self.fin_de_juego()
+            self.aterrizaje()
                 
             self.pantalla_principal.fill( COLOR_FONDO)
             self.nave.dibujar(self.pantalla_principal)
@@ -55,12 +57,14 @@ class Partida:
                         asteroides.arriba <= self.nave.abajo:
                             self.game_over = False
                             asteroides.vx*= 0
+                            
+            if self.aparecer_planeta:
+                if self.planeta.pos_x > ANCHO:
+                    self.planeta.pos_x -= 1
 
             if self.temporizador <= 0:
-                self.planeta.pos_x = ANCHO
-                self.planeta.pos_y = ra.randint(0,ALTO)
-                    
-
+                self.aparecer_planeta = True
+                                    
             
             asteroides.comprobar_choque(self.nave)
             self.mostrar_marcador()
@@ -111,7 +115,13 @@ class Partida:
 
         if self.temporizador < 0:
             self.contadorPuntos += 1*10
-
+    
+    def aterrizaje(self):
+        if self.temporizador <= 0:
+            self.nave.pos_x = 10 
+            self.nave.pos_y = 350
+            self.nave.vx += 1
+    
     
          
         
