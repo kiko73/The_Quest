@@ -4,12 +4,14 @@ import random as ra
 from questapp.utils import*
 
 
+
 class Partida:
     def __init__(self):
         pg.init()
         self.pantalla_principal = pg.display.set_mode((ANCHO,ALTO))
         pg.display.set_caption("The Quest")
         self.tasa_refresco = pg.time.Clock()
+        self.imagenFondo = pg.image.load("questapp/images/fondo.png")
 
         self.nave = Nave(10, ALTO//2 - (60//2))
         self.planeta = Planeta(ANCHO,ALTO//2)
@@ -18,7 +20,8 @@ class Partida:
         for i in range(1,12):
             self.asteroides.append(Asteroide(ra.randint(10,1300),ra.randint(0,700),(ra.randint(0,255),ra.randint(0,255),ra.randint(0,255)),radio=ra.randint(20,40)))
 
-        self.fuente = pg.font.Font("questapp/fonts/Orbitron.ttf",30)
+        self.fuente = pg.font.Font(FUENTE1,30)
+        self.fuente2 = pg.font.Font(FUENTE2,20)
         self.contadorTiempo = 0
         self.contadorPuntos = 0
         self.temporizador = TIEMPO_JUEGO
@@ -30,22 +33,25 @@ class Partida:
     def bucle_fotograma(self):
 
         while self.game_over:
-            self.valor_tasa = self.tasa_refresco.tick(150)
+            self.valor_tasa = self.tasa_refresco.tick(600)
             self.temporizador = self.temporizador - self.valor_tasa
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     self.game_over = False
 
+            
+            
             self.puntuacion()
             self.velocidad_juego()
             self.fin_de_juego()
             self.aterrizaje()
                 
             self.pantalla_principal.fill( COLOR_FONDO)
+            self.pantalla_principal.blit(self.imagenFondo,(0,0))
             self.nave.dibujar(self.pantalla_principal)
             self.planeta.dibujarPlaneta(self.pantalla_principal)
             self.mostrar_juego()
-
+            
             
             for asteroides in (self.asteroides):
                 asteroides.mover()
@@ -86,8 +92,8 @@ class Partida:
         
 
     def mostrar_marcador(self):
-        marcador1 = self.fuente.render(str(int(self.temporizador/1000)),True,(COLOR_BLANCO))
-        marcador2 = self.fuente.render(str(int(self.contadorPuntos/100)),True,(COLOR_BLANCO))
+        marcador1 = self.fuente2.render(str(int(self.temporizador/1000)),True,(COLOR_BLANCO))
+        marcador2 = self.fuente2.render(str(int(self.contadorPuntos/100)),True,(COLOR_BLANCO))
         self.pantalla_principal.blit(marcador1,(60,60))
         self.pantalla_principal.blit(marcador2,(210,60))
 
@@ -98,7 +104,7 @@ class Partida:
         self.pantalla_principal.blit(punto,(170,20))
 
     def fin_de_juego(self):
-        if self.temporizador <= 0 - 5000:
+        if self.temporizador <= 0 - 10000:
             self.game_over = False
                 
     
@@ -133,6 +139,44 @@ class Partida:
             elif self.nave.pos_y > centro_y:
                 self.nave.pos_y -= velocidad_movimiento * self.valor_tasa
             
+
+
+class Menu:
+    pg.init()
+    def __init__(self):
+        self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
+        pg.display.set_caption("Menu")
+        self.tasa_refresco = pg.time.Clock()
+        self.imagenFondo = pg.image.load("questapp/images/fondo2.png")
+        self.fuente = pg.font.Font(FUENTE2,50)
+
+    def bucle_pantalla(self):
+        game_over= True
+        while game_over:
+            for evento in pg.event.get():
+                if evento.type == pg.QUIT:
+                    game_over = False
+
+            enter = pg.key.get_pressed()
+            if enter[pg.K_RETURN]:
+                #game_over = False
+                return "partida"
+
+
+
+            self.pantalla_principal.blit(self.imagenFondo,(0,0))
+
+            texto_menu = self.fuente.render("Pulsa ENTER para jugar",True,COLOR_ROJO)
+            self.pantalla_principal.blit(texto_menu,(100,300))
+
+
+            pg.display.flip()
+        pg.quit()
+
+
+
+
+        
 
             
             

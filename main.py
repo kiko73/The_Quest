@@ -1,4 +1,13 @@
-from questapp.pantallas import Partida
+from questapp.pantallas import Partida,Menu
+
+
+
+menu= Menu()
+
+
+valor = menu.bucle_pantalla()
 
 juego = Partida()
-juego.bucle_fotograma()
+
+if valor == "partida":
+    juego.bucle_fotograma()

@@ -43,7 +43,7 @@ class Nave:
         
 
 class Asteroide:
-    def __init__(self,pos_x,pos_y,color=COLOR_BLANCO,w=20,h=20,radio=5,vx=1):
+    def __init__(self,pos_x,pos_y,color=COLOR_BLANCO,w=20,h=20,radio=5,vx=2):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.color = color
@@ -57,7 +57,7 @@ class Asteroide:
         pg.draw.circle(surface,self.color,(self.pos_x,self.pos_y),self.radio)
 
 
-    def mover(self, X_MAX=1400):
+    def mover(self, X_MAX=1300):
         self.pos_x -= self.vx
 
         if self.pos_x >= X_MAX + (self.radio) or self.pos_x <=0:
