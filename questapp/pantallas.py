@@ -50,6 +50,7 @@ class Partida:
             self.pantalla_principal.blit(self.imagenFondo,(0,0))
             self.nave.dibujar(self.pantalla_principal)
             self.planeta.dibujarPlaneta(self.pantalla_principal)
+            self.mostrar_marcador()
             self.mostrar_juego()
             
             
@@ -76,7 +77,6 @@ class Partida:
                                     
             
             asteroides.comprobar_choque(self.nave)
-            self.mostrar_marcador()
             self.nave.mover(pg.K_UP,pg.K_DOWN)
             self.planeta.mover()
 
@@ -149,6 +149,18 @@ class Menu:
         self.tasa_refresco = pg.time.Clock()
         self.imagenFondo = pg.image.load("questapp/images/fondo2.png")
         self.fuente = pg.font.Font(FUENTE2,50)
+        self.fuente2 = pg.font.Font(FUENTE1,20)
+
+        self.pos_x_menu = 100
+        self.pos_y_menu = 550
+        self.pos_x_titulo = 400
+        self.pos_y_titulo = 50
+        self.pos_x_instrucciones = 300
+        self.pos_y_instrucciones = 300
+
+    def mostrar_texto(self,texto,fuente,color,posicion):
+        texto_principio = fuente.render(texto,True,color)
+        self.pantalla_principal.blit(texto_principio,posicion)
 
     def bucle_pantalla(self):
         game_over= True
@@ -166,12 +178,58 @@ class Menu:
 
             self.pantalla_principal.blit(self.imagenFondo,(0,0))
 
-            texto_menu = self.fuente.render("Pulsa ENTER para jugar",True,COLOR_ROJO)
-            self.pantalla_principal.blit(texto_menu,(100,300))
+            self.mostrar_texto("Pulsa ENTER para jugar",self.fuente,COLOR_ROJO,(self.pos_x_menu,self.pos_y_menu))
+            self.mostrar_texto("THE QUEST",self.fuente,COLOR_ROJO,(self.pos_x_titulo,self.pos_y_titulo))
+            self.mostrar_texto("En el año 2153, la raza humana debe iniciar la busqueda de nuevos planetas habitables para su supervivencia.",self.fuente2,COLOR_AMARILLO,(10,150))
+            self.mostrar_texto("Despues de 10 años de travesía por el espacio, los tripulantes de la nave NEW EXPLORER creen haber encontrado",self.fuente2,COLOR_AMARILLO,(10,180))
+            self.mostrar_texto("un planeta adecuado, pero una nube de asteroides se interpone en su camino.",self.fuente2,COLOR_AMARILLO,(10,210))
+            self.mostrar_texto("INSTRUCCIONES",self.fuente,COLOR_ROJO,(300,300))
+            self.mostrar_texto("Dispones de 60 segundos para esquivar los asteroides y aterrizar en Orion73, cuanto mas tiempo estes en el aire",self.fuente2,COLOR_AMARILLO,(10,360))
+            self.mostrar_texto("mas puntos recibiras. Mueve la nave hacia arriba y abajo con el cursor y pasa de nivel, pero ¡cuidado!, porqué por",self.fuente2,COLOR_AMARILLO,(10,390))
+            self.mostrar_texto("cada nivel que superes, aumentaran el número de asteroides y su velocidad. Si aterrizas sin percances , recibiras",self.fuente2,COLOR_AMARILLO,(10,420))
+            self.mostrar_texto("un extra de puntos. Suerte y recuerda que el futuro de la humanidad depende de ti.",self.fuente2,COLOR_AMARILLO,(10,450))
+
+
+           
+
+            pg.display.flip()
+        pg.quit()
+"""
+class Continuar:
+    pg.init()
+    def __init__(self):
+        self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
+        pg.display.set_caption("Continuar")
+        self.tasa_refresco = pg.time.Clock()
+        self.imagenFondo = pg.image.load("questapp/images/fondo3.png")
+        self.fuenteContinuar = pg.font.Font(FUENTE2,50)
+
+    def bucle_pantalla(self):
+        game_over= True
+        while game_over:
+            for evento in pg.event.get():
+                if evento.type == pg.QUIT:
+                    game_over = False
+
+            enter = pg.key.get_pressed()
+            if enter[pg.K_RETURN]:
+                #game_over = False
+                return "partida"
+
+
+
+            self.pantalla_principal.blit(self.imagenFondo,(0,0))
+
+            texto_continuar = self.fuenteContinuar.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
+            self.pantalla_principal.blit(texto_continuar,(10,300))
 
 
             pg.display.flip()
         pg.quit()
+"""    
+
+        
+
 
 
 

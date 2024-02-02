@@ -2,7 +2,7 @@ import pygame as pg
 from .utils import*
 
 class Nave:
-    def __init__(self, pos_x,pos_y,color=COLOR_NAVE,w=80,h=60,vx=1,vy=1):
+    def __init__(self, pos_x,pos_y,color=COLOR_NAVE,w=80,h=60,vx=1,vy=3):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.color = color
@@ -19,10 +19,10 @@ class Nave:
         estado_teclado = pg.key.get_pressed()
 
         if estado_teclado[teclado_arriba] == True and self.pos_y >= 0<=(self.h):
-            self.pos_y -= 1
+            self.pos_y -= 2
         
         if estado_teclado[teclado_abajo] == True and self.pos_y <= 700-(self.h):
-            self.pos_y += 1
+            self.pos_y += 2
 
     @property
     def derecha(self):
