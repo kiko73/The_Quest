@@ -142,8 +142,9 @@ class Partida:
 
 
 class Menu:
-    pg.init()
+    
     def __init__(self):
+        pg.init()
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
         pg.display.set_caption("Menu")
         self.tasa_refresco = pg.time.Clock()
@@ -197,13 +198,14 @@ class Menu:
         pg.quit()
 
 class Continuar:
-    pg.init()
+    
     def __init__(self,continuar):
+        pg.init()
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
         pg.display.set_caption("Continuar")
         self.tasa_refresco = pg.time.Clock()
         self.imagenFondo = pg.image.load("questapp/images/fondo3.png")
-        #self.fuente = pg.font.Font(FUENTE2,50)
+        self.fuente = pg.font.Font(FUENTE2,50)
         self.continuar = continuar
 
     def bucle_pantalla(self):
@@ -221,8 +223,8 @@ class Continuar:
 
 
             #self.pantalla_principal.fill(self.imagenFondo,(0,0))
-            #texto_continuar = self.fuente.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
-            #self.pantalla_principal.blit(texto_continuar,(10,300))
+            texto_continuar = self.fuente.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
+            self.pantalla_principal.blit(texto_continuar,(10,300))
 
 
             pg.display.flip()
