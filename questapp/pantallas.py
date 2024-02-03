@@ -150,6 +150,7 @@ class Menu:
         self.imagenFondo = pg.image.load("questapp/images/fondo2.png")
         self.fuente = pg.font.Font(FUENTE2,50)
         self.fuente2 = pg.font.Font(FUENTE1,20)
+        
 
         self.pos_x_menu = 100
         self.pos_y_menu = 550
@@ -194,15 +195,16 @@ class Menu:
 
             pg.display.flip()
         pg.quit()
-"""
+
 class Continuar:
     pg.init()
-    def __init__(self):
+    def __init__(self,continuar):
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
         pg.display.set_caption("Continuar")
         self.tasa_refresco = pg.time.Clock()
         self.imagenFondo = pg.image.load("questapp/images/fondo3.png")
-        self.fuenteContinuar = pg.font.Font(FUENTE2,50)
+        #self.fuente = pg.font.Font(FUENTE2,50)
+        self.continuar = continuar
 
     def bucle_pantalla(self):
         game_over= True
@@ -210,23 +212,22 @@ class Continuar:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     game_over = False
-
+            
             enter = pg.key.get_pressed()
             if enter[pg.K_RETURN]:
                 #game_over = False
                 return "partida"
+            
 
 
-
-            self.pantalla_principal.blit(self.imagenFondo,(0,0))
-
-            texto_continuar = self.fuenteContinuar.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
-            self.pantalla_principal.blit(texto_continuar,(10,300))
+            #self.pantalla_principal.fill(self.imagenFondo,(0,0))
+            #texto_continuar = self.fuente.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
+            #self.pantalla_principal.blit(texto_continuar,(10,300))
 
 
             pg.display.flip()
         pg.quit()
-"""    
+    
 
         
 
