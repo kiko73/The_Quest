@@ -52,6 +52,7 @@ class Asteroide:
         self.radio = radio
         self.vx = vx
         
+        
 
     def dibujarAsteroide(self,surface):
         pg.draw.circle(surface,self.color,(self.pos_x,self.pos_y),self.radio)
@@ -88,13 +89,14 @@ class Asteroide:
             self.derecha >= nave.izquierda and\
             self.abajo >= nave.arriba and\
             self.arriba <= nave.abajo:
+                pg.mixer.Sound.play(self.sonido)
                 self.vx*= 0
 
     
             
 
 class Planeta():
-    def __init__(self,pos_x,pos_y,color=COLOR_BLANCO,w=20,h=20,radio=300,vx=1):
+    def __init__(self,pos_x,pos_y,color=COLOR_AMARILLO,w=20,h=20,radio=300,vx=1):
         self.pos_x = pos_x + 300
         self.pos_y = pos_y
         self.color = color

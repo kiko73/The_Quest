@@ -7,14 +7,15 @@ from questapp.utils import*
 
 class Partida:
     def __init__(self):
-        pg.init()
+        
         self.pantalla_principal = pg.display.set_mode((ANCHO,ALTO))
         pg.display.set_caption("The Quest")
         self.tasa_refresco = pg.time.Clock()
         self.imagenFondo = pg.image.load("questapp/images/fondo.png")
-
         self.nave = Nave(10, ALTO//2 - (60//2))
         self.planeta = Planeta(ANCHO,ALTO//2)
+        #self.sonido_pantalla = pg.mixer.Sound("questapp/sounds/pantalla.mp3")
+        self.sonido_explosion = pg.mixer.Sound("questapp/sounds/explosion.wav")
         self.asteroides = []
         
         for i in range(1,12):
@@ -27,17 +28,21 @@ class Partida:
         self.temporizador = TIEMPO_JUEGO
         self.game_over = True
         self.aparecer_planeta = False
-        
+        #self.sonido_explosion = pg.mixer.Sound("questapp/sounds/explosion.wav")
         
 
     def bucle_fotograma(self):
+        self.temporizador = TIEMPO_JUEGO
+        self.tasa_refresco.tick()
 
         while self.game_over:
+            #pg.mixer.Sound.play(self.sonido_pantalla)
             self.valor_tasa = self.tasa_refresco.tick(600)
             self.temporizador = self.temporizador - self.valor_tasa
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     self.game_over = False
+                
 
             
             
@@ -65,7 +70,9 @@ class Partida:
                         asteroides.arriba <= self.nave.abajo:
                             self.game_over = False
                             asteroides.vx*= 1
-            
+                            pg.mixer.Sound.play(self.sonido_explosion)
+                            pg.time.delay(1000)
+                            
                 
                             
             if self.aparecer_planeta:
@@ -86,7 +93,7 @@ class Partida:
    
          
 
-        pg.quit()
+        
 
     
         
@@ -105,6 +112,7 @@ class Partida:
 
     def fin_de_juego(self):
         if self.temporizador <= 0 - 10000:
+            #pg.mixer.Sound.stop(self.sonido)
             self.game_over = False
                 
     
@@ -144,13 +152,14 @@ class Partida:
 class Menu:
     
     def __init__(self):
-        pg.init()
+        
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
         pg.display.set_caption("Menu")
         self.tasa_refresco = pg.time.Clock()
-        self.imagenFondo = pg.image.load("questapp/images/fondo2.png")
+        self.imagenFondo2 = pg.image.load("questapp/images/fondo2.png")
         self.fuente = pg.font.Font(FUENTE2,50)
         self.fuente2 = pg.font.Font(FUENTE1,20)
+        self.sonido = pg.mixer.Sound("questapp/sounds/menu.mp3")
         
 
         self.pos_x_menu = 100
@@ -167,6 +176,7 @@ class Menu:
     def bucle_pantalla(self):
         game_over= True
         while game_over:
+            pg.mixer.Sound.play(self.sonido)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     game_over = False
@@ -174,11 +184,12 @@ class Menu:
             enter = pg.key.get_pressed()
             if enter[pg.K_RETURN]:
                 #game_over = False
+                pg.mixer.Sound.stop(self.sonido)
                 return "partida"
 
 
 
-            self.pantalla_principal.blit(self.imagenFondo,(0,0))
+            self.pantalla_principal.blit(self.imagenFondo2,(0,0))
 
             self.mostrar_texto("Pulsa ENTER para jugar",self.fuente,COLOR_ROJO,(self.pos_x_menu,self.pos_y_menu))
             self.mostrar_texto("THE QUEST",self.fuente,COLOR_ROJO,(self.pos_x_titulo,self.pos_y_titulo))
@@ -195,16 +206,16 @@ class Menu:
            
 
             pg.display.flip()
-        pg.quit()
+        
 
 class Continuar:
     
     def __init__(self,continuar):
-        pg.init()
+       
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
         pg.display.set_caption("Continuar")
         self.tasa_refresco = pg.time.Clock()
-        self.imagenFondo = pg.image.load("questapp/images/fondo3.png")
+        self.imagenFondo3 = pg.image.load("questapp/images/fondo3.png")
         self.fuente = pg.font.Font(FUENTE2,50)
         self.continuar = continuar
 
@@ -217,18 +228,49 @@ class Continuar:
             
             enter = pg.key.get_pressed()
             if enter[pg.K_RETURN]:
-                #game_over = False
                 return "partida"
             
 
 
-            #self.pantalla_principal.fill(self.imagenFondo,(0,0))
+            #self.pantalla_principal.fill(self.imagenFondo3,(0,0))
             texto_continuar = self.fuente.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
             self.pantalla_principal.blit(texto_continuar,(10,300))
 
 
             pg.display.flip()
-        pg.quit()
+       
+
+class Record:
+    def __init__(self):
+        
+        self.pantalla_principal = pg.display .set_mode((ANCHO,ALTO))
+        pg.display.set_caption("Puntuaciones")
+        self.tasa_refresco = pg.time.Clock()
+        self.fuenteRecord = pg.font.Font (FUENTE1,20)
+
+    def bucle_pantalla(self):
+        game_over = True
+        while game_over:
+            for evento in pg.event.get():
+                if evento.type == pg.QUIT:
+                    game_over == False
+
+            self.pantalla_principal.fill(COLOR_BLANCO)
+            texto = self.fuenteRecord.render("Mejores Putuaciones",0,COLOR_ROJO)
+
+            enter = pg.key.get_pressed()
+            if enter[pg.K_RETURN]:
+                game_over = False
+                
+            self.pantalla_principal.blit(texto,(160,ALTO//2))
+
+            pg.display.flip()
+
+       
+
+
+
+      
     
 
         
