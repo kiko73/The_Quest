@@ -29,7 +29,7 @@ class Partida:
         self.temporizador = TIEMPO_JUEGO
         self.game_over = True
         self.aparecer_planeta = False
-        #self.sonido_explosion = pg.mixer.Sound("questapp/sounds/explosion.wav")
+        
         
 
     def bucle_fotograma(self):
@@ -40,9 +40,11 @@ class Partida:
             #pg.mixer.Sound.play(self.sonido_pantalla)
             self.valor_tasa = self.tasa_refresco.tick(600)
             self.temporizador = self.temporizador - self.valor_tasa
-            for evento in pg.event.get():
-                if evento.type == pg.QUIT:
-                    self.game_over = False
+
+            if self.game_over:
+                for evento in pg.event.get():
+                    if evento.type == pg.QUIT:
+                        self.game_over = False
                 
 
             
@@ -50,6 +52,7 @@ class Partida:
             self.puntuacion()
             self.velocidad_juego()
             self.fin_de_juego()
+            
             self.aterrizaje()
                 
             self.pantalla_principal.fill( COLOR_FONDO)
@@ -72,6 +75,7 @@ class Partida:
                         asteroides.arriba <= self.nave.abajo:
                             self.game_over = False
                             asteroides.vx*= 1
+                            pg.mixer.Sound.set_volume(self.sonido_explosion,0.05)
                             pg.mixer.Sound.play(self.sonido_explosion)
                             pg.time.delay(1000)
                             
@@ -138,7 +142,7 @@ class Partida:
             multiplicador = 10
 
         self.contadorPuntos += multiplicador * 1
-    
+   
     def aterrizaje(self):
         if self.temporizador <= 0:
             centro_x = 920
@@ -154,6 +158,11 @@ class Partida:
                 self.nave.pos_y += velocidad_movimiento * self.valor_tasa
             elif self.nave.pos_y > centro_y:
                 self.nave.pos_y -= velocidad_movimiento * self.valor_tasa
+
+            if self.temporizador <= -6000:
+                self.nave.rotar(1)
+                if self.nave.rotacion_completa:
+                    self.aparecer_planeta = True
             
 
 
@@ -184,6 +193,7 @@ class Menu:
     def bucle_pantalla(self):
         game_over= True
         while game_over:
+            pg.mixer.Sound.set_volume(self.sonido,0.05)
             pg.mixer.Sound.play(self.sonido)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:

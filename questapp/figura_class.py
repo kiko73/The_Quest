@@ -1,5 +1,7 @@
 import pygame as pg
 from .utils import*
+import random as ra
+
 
 class Nave:
     def __init__(self, pos_x,pos_y,color=COLOR_NAVE,w=80,h=60,vx=1,vy=3):
@@ -10,10 +12,13 @@ class Nave:
         self.h = h
         self.vx = vx
         self.vy = vy
+        self.nave_original = pg.image.load("questapp/images/nave.png")
+        self.nave = self.nave_original
+        self.angulo = 0
         
 
     def dibujar(self,surface):
-        pg.draw.rect(surface,self.color,(self.pos_x,self.pos_y,self.w,self.h))
+        surface.blit(self.nave,(self.pos_x-(self.w//2 - 40),self.pos_y-(self.h//2)))
 
     def mover(self,teclado_arriba,teclado_abajo):
         estado_teclado = pg.key.get_pressed()
@@ -23,6 +28,13 @@ class Nave:
         
         if estado_teclado[teclado_abajo] == True and self.pos_y <= 700-(self.h):
             self.pos_y += 2
+
+    def rotar(self, grados_por_paso):
+        self.angulo = grados_por_paso
+        if self.angulo <= 180:
+            self.angulo = 180
+            self.rotacion_completa = True
+        self.nave = pg.transform.rotate(self.nave_original,self.angulo)
 
     @property
     def derecha(self):
@@ -51,12 +63,14 @@ class Asteroide:
         self.h = h
         self.radio = radio
         self.vx = vx
+        self.asteroide = pg.image.load("questapp/images/asteroide.png")
+        self.asteroide2 = pg.image.load("questapp/images/asteroide2.png")
         
         
 
     def dibujarAsteroide(self,surface):
-        pg.draw.circle(surface,self.color,(self.pos_x,self.pos_y),self.radio)
-
+        surface.blit(self.asteroide,(self.pos_x ,self.pos_y + 100))
+        surface.blit(self.asteroide2,(self.pos_x,self.pos_y))
 
     def mover(self, X_MAX=1300):
         self.pos_x -= self.vx
@@ -96,7 +110,7 @@ class Asteroide:
             
 
 class Planeta():
-    def __init__(self,pos_x,pos_y,color=COLOR_AMARILLO,w=20,h=20,radio=300,vx=1):
+    def __init__(self,pos_x,pos_y,color=COLOR_AMARILLO,w=300,h=300,radio=300,vx=1):
         self.pos_x = pos_x + 300
         self.pos_y = pos_y
         self.color = color
@@ -104,9 +118,12 @@ class Planeta():
         self.h = h
         self.radio = radio
         self.vx = vx
+        #self.planeta = pg.image.load("questapp/images/planeta.png")
+        
 
     def dibujarPlaneta(self,surface):
         pg.draw.circle(surface,self.color,(self.pos_x,self.pos_y),self.radio)
+        #surface.blit(self.planeta,(self.pos_x,self.pos_y))
     
     def mover(self):
         self.pos_x -= self.vx
