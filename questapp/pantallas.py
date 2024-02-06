@@ -23,6 +23,7 @@ class Partida:
 
         self.fuente = pg.font.Font(FUENTE1,30)
         self.fuente2 = pg.font.Font(FUENTE2,20)
+        self.fuente3 = pg.font.Font(FUENTE1,80)
         self.contadorTiempo = 0
         self.contadorPuntos = 0
         self.temporizador = TIEMPO_JUEGO
@@ -57,6 +58,7 @@ class Partida:
             self.planeta.dibujarPlaneta(self.pantalla_principal)
             self.mostrar_marcador()
             self.mostrar_juego()
+            self.mostrar_texto()
             
             
             for asteroides in (self.asteroides):
@@ -111,11 +113,17 @@ class Partida:
         self.pantalla_principal.blit(punto,(170,20))
 
     def fin_de_juego(self):
-        if self.temporizador <= 0 - 10000:
+        if self.temporizador <=0 - 15000:
             #pg.mixer.Sound.stop(self.sonido)
             self.game_over = False
-                
-    
+
+
+    def mostrar_texto(self):
+        if self.temporizador <= 0 - 10000:
+            texto_continuar = self.fuente3.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
+            self.pantalla_principal.blit(texto_continuar,(10,300))
+           
+            
     def velocidad_juego(self):
         if self.temporizador <=30000:
             self.valor_tasa = self.valor_tasa + self.valor_tasa
