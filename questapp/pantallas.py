@@ -15,7 +15,7 @@ class Partida:
         self.nave = Nave(10, ALTO//2 - (60//2))
         self.planeta = Planeta(ANCHO,ALTO//2)
         #self.sonido_pantalla = pg.mixer.Sound("questapp/sounds/pantalla.mp3")
-        self.sonido_explosion = pg.mixer.Sound("questapp/sounds/explosion.wav")
+        self.sonido_explosion = pg.mixer.Sound("questapp/sounds/destroyer.wav")
         self.asteroides = []
         
         for i in range(1,12):
@@ -29,12 +29,18 @@ class Partida:
         self.temporizador = TIEMPO_JUEGO
         self.game_over = True
         self.aparecer_planeta = False
+        self.explosion1 = pg.image.load("questapp/images/explosion1.png").convert_alpha()
+        self.explosion2 = pg.image.load("questapp/images/explosion2.png").convert_alpha()
+        self.explosion3 = pg.image.load("questapp/images/explosion3.png").convert_alpha()
         
         
 
     def bucle_fotograma(self):
         self.temporizador = TIEMPO_JUEGO
         self.tasa_refresco.tick()
+
+        explosion_offset_x = 0
+        explosion_offset_y = 0
 
         while self.game_over:
             #pg.mixer.Sound.play(self.sonido_pantalla)
@@ -78,7 +84,18 @@ class Partida:
                             pg.mixer.Sound.set_volume(self.sonido_explosion,0.05)
                             pg.mixer.Sound.play(self.sonido_explosion)
                             pg.time.delay(1000)
-                            
+
+                            for i in range(3):
+                                pos_x = self.nave.pos_x - explosion_offset_x
+                                pos_y = self.nave.pos_y - explosion_offset_y
+                                
+                            self.pantalla_principal.blit(self.explosion1, (pos_x, pos_y))
+                            self.pantalla_principal.blit(self.explosion2, (pos_x, pos_y))
+                            self.pantalla_principal.blit(self.explosion3, (pos_x, pos_y))
+                            pg.display.flip()
+                            pg.time.delay(1000)  
+                            self.pantalla_principal.fill(COLOR_FONDO) 
+                            pg.display.flip() 
                 
                             
             if self.aparecer_planeta:
@@ -226,16 +243,16 @@ class Menu:
             pg.display.flip()
         
 
-class Continuar:
+class Record:
     
-    def __init__(self,continuar):
+    def __init__(self,record):
        
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
-        pg.display.set_caption("Continuar")
+        pg.display.set_caption("Puntuaciones")
         self.tasa_refresco = pg.time.Clock()
         self.imagenFondo3 = pg.image.load("questapp/images/fondo3.png")
         self.fuente = pg.font.Font(FUENTE2,50)
-        self.continuar = continuar
+        self.record = record
 
     def bucle_pantalla(self):
         game_over= True
@@ -251,13 +268,15 @@ class Continuar:
 
 
             #self.pantalla_principal.fill(self.imagenFondo3,(0,0))
-            texto_continuar = self.fuente.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
+            texto = self.fuente.render("Mejores Putuaciones",0,COLOR_ROJO)
+            self.pantalla_principal.blit(texto,(160,ALTO//2))
+            texto_continuar= self.fuente.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
             self.pantalla_principal.blit(texto_continuar,(10,300))
 
 
             pg.display.flip()
        
-
+"""
 class Record:
     def __init__(self):
         
@@ -283,7 +302,7 @@ class Record:
             self.pantalla_principal.blit(texto,(160,ALTO//2))
 
             pg.display.flip()
-
+"""
        
 
 

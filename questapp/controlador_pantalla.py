@@ -4,8 +4,9 @@ class PantallaControlador:
     def __init__(self):
         self.menu = Menu()
         self.partida = Partida()
-        #self.continuar = Continuar()
         self.record = Record()
+        #self.continuar = Continuar()
+       
 
     def start(self):
         valor = self.menu.bucle_pantalla()
@@ -14,8 +15,8 @@ class PantallaControlador:
             self.partida.bucle_fotograma()
             continuar_partida = self.partida.fin_de_juego()
             if continuar_partida !="":    
-                continuar = Continuar(continuar_partida)
-                continuar.bucle_pantalla()
-        elif valor =="record":
-            self.record.bucle_pantalla()
+                record = Record(continuar_partida)
+                record.bucle_pantalla()
+        #elif valor =="record":
+            #self.record.bucle_pantalla()
 

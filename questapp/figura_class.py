@@ -16,7 +16,7 @@ class Nave:
         self.nave = self.nave_original
         self.angulo = 0
         
-
+   
     def dibujar(self,surface):
         surface.blit(self.nave,(self.pos_x-(self.w//2 - 40),self.pos_y-(self.h//2)))
 
@@ -29,7 +29,7 @@ class Nave:
         if estado_teclado[teclado_abajo] == True and self.pos_y <= 700-(self.h):
             self.pos_y += 2
 
-    def rotar(self, grados_por_paso):
+    def rotar(self,grados_por_paso):
         self.angulo = grados_por_paso
         if self.angulo <= 180:
             self.angulo = 180
