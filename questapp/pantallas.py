@@ -122,10 +122,15 @@ class Partida:
         
 
     def mostrar_marcador(self):
+
         marcador1 = self.fuente2.render(str(int(self.temporizador/1000)),True,(COLOR_BLANCO))
-        marcador2 = self.fuente2.render(str(int(self.contadorPuntos/100)),True,(COLOR_BLANCO))
+        marcador2 = self.fuente2.render(str(int(self.contadorPuntos)),True,(COLOR_BLANCO))
         self.pantalla_principal.blit(marcador1,(60,60))
         self.pantalla_principal.blit(marcador2,(210,60))
+
+        if self.temporizador <= 0 - 10000:
+            self.contadorPuntos = False
+            
 
     def mostrar_juego(self):
         tiempo = self.fuente.render("Tiempo",True,(COLOR_MORADO))
@@ -134,7 +139,7 @@ class Partida:
         self.pantalla_principal.blit(punto,(170,20))
 
     def fin_de_juego(self):
-        if self.temporizador <=0 - 15000:
+        if self.temporizador <=0 - 30000:
             #pg.mixer.Sound.stop(self.sonido)
             self.game_over = False
 
@@ -143,7 +148,13 @@ class Partida:
         if self.temporizador <= 0 - 10000:
             texto_continuar = self.fuente3.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
             self.pantalla_principal.blit(texto_continuar,(10,300))
-           
+
+            enter = pg.key.get_pressed()
+            if enter[pg.K_RETURN]:
+                #game_over = False
+                pg.mixer.Sound.stop(self.sonido)
+                return "partida"
+            
             
     def velocidad_juego(self):
         if self.temporizador <=30000:
@@ -156,7 +167,7 @@ class Partida:
         if self.temporizador <=15000:
             multiplicador = 4
         if self.temporizador < 0:
-            multiplicador = 10
+            multiplicador = 1000
 
         self.contadorPuntos += multiplicador * 1
    
@@ -245,14 +256,15 @@ class Menu:
 
 class Record:
     
-    def __init__(self,record):
+    def __init__(self):
        
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
         pg.display.set_caption("Puntuaciones")
         self.tasa_refresco = pg.time.Clock()
         self.imagenFondo3 = pg.image.load("questapp/images/fondo3.png")
-        self.fuente = pg.font.Font(FUENTE2,50)
-        self.record = record
+        self.fuente = pg.font.Font(FUENTE2,20)
+        self.fuente2 = pg.font.Font(FUENTE2,50)
+        
 
     def bucle_pantalla(self):
         game_over= True
@@ -268,41 +280,16 @@ class Record:
 
 
             #self.pantalla_principal.fill(self.imagenFondo3,(0,0))
-            texto = self.fuente.render("Mejores Putuaciones",0,COLOR_ROJO)
-            self.pantalla_principal.blit(texto,(160,ALTO//2))
+            texto = self.fuente2.render("Mejores Putuaciones",0,COLOR_ROJO)
+            self.pantalla_principal.blit(texto,(160,100))
             texto_continuar= self.fuente.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
-            self.pantalla_principal.blit(texto_continuar,(10,300))
+            self.pantalla_principal.blit(texto_continuar,(350,600))
 
 
             pg.display.flip()
        
-"""
-class Record:
-    def __init__(self):
-        
-        self.pantalla_principal = pg.display .set_mode((ANCHO,ALTO))
-        pg.display.set_caption("Puntuaciones")
-        self.tasa_refresco = pg.time.Clock()
-        self.fuenteRecord = pg.font.Font (FUENTE1,20)
 
-    def bucle_pantalla(self):
-        game_over = True
-        while game_over:
-            for evento in pg.event.get():
-                if evento.type == pg.QUIT:
-                    game_over == False
 
-            self.pantalla_principal.fill(COLOR_BLANCO)
-            texto = self.fuenteRecord.render("Mejores Putuaciones",0,COLOR_ROJO)
-
-            enter = pg.key.get_pressed()
-            if enter[pg.K_RETURN]:
-                game_over = False
-                
-            self.pantalla_principal.blit(texto,(160,ALTO//2))
-
-            pg.display.flip()
-"""
        
 
 
