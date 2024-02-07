@@ -1,4 +1,4 @@
-import pygame as pg
+
 from questapp.figura_class import Asteroide,Nave,Planeta
 import random as ra
 from questapp.utils import*
@@ -14,7 +14,6 @@ class Partida:
         self.imagenFondo = pg.image.load("questapp/images/fondo.png")
         self.nave = Nave(10, ALTO//2 - (60//2))
         self.planeta = Planeta(ANCHO,ALTO//2)
-        #self.sonido_pantalla = pg.mixer.Sound("questapp/sounds/pantalla.mp3")
         self.sonido_explosion = pg.mixer.Sound("questapp/sounds/destroyer.wav")
         self.asteroides = []
         
@@ -43,7 +42,7 @@ class Partida:
         explosion_offset_y = 0
 
         while self.game_over:
-            #pg.mixer.Sound.play(self.sonido_pantalla)
+          
             self.valor_tasa = self.tasa_refresco.tick(600)
             self.temporizador = self.temporizador - self.valor_tasa
 
@@ -52,13 +51,14 @@ class Partida:
                     if evento.type == pg.QUIT:
                         self.game_over = False
                 
-
+            enter = pg.key.get_pressed()
+            if enter[pg.K_r]:
+                return "seguir"
             
             
             self.puntuacion()
             self.velocidad_juego()
             self.fin_de_juego()
-            
             self.aterrizaje()
                 
             self.pantalla_principal.fill( COLOR_FONDO)
@@ -67,7 +67,7 @@ class Partida:
             self.planeta.dibujarPlaneta(self.pantalla_principal)
             self.mostrar_marcador()
             self.mostrar_juego()
-            self.mostrar_texto()
+            self.mostrar_texto(pg)
             
             
             for asteroides in (self.asteroides):
@@ -106,7 +106,7 @@ class Partida:
                 self.aparecer_planeta = True
                                     
             
-            asteroides.comprobar_choque(self.nave)
+           
             self.nave.mover(pg.K_UP,pg.K_DOWN)
             self.planeta.mover()
 
@@ -139,21 +139,20 @@ class Partida:
         self.pantalla_principal.blit(punto,(170,20))
 
     def fin_de_juego(self):
-        if self.temporizador <=0 - 30000:
-            #pg.mixer.Sound.stop(self.sonido)
+        if self.temporizador <=0 - 15000:
+            
             self.game_over = False
+            
 
-
-    def mostrar_texto(self):
+    def mostrar_texto(self,pg):
         if self.temporizador <= 0 - 10000:
-            texto_continuar = self.fuente3.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
+            texto_continuar = self.fuente3.render("Pulsa r para continuar",True,COLOR_ROJO)
             self.pantalla_principal.blit(texto_continuar,(10,300))
-
+          
             enter = pg.key.get_pressed()
             if enter[pg.K_RETURN]:
-                #game_over = False
-                pg.mixer.Sound.stop(self.sonido)
                 return "partida"
+           
             
             
     def velocidad_juego(self):
@@ -213,6 +212,7 @@ class Menu:
         self.pos_y_titulo = 50
         self.pos_x_instrucciones = 300
         self.pos_y_instrucciones = 300
+        self.bucle_pantalla()
 
     def mostrar_texto(self,texto,fuente,color,posicion):
         texto_principio = fuente.render(texto,True,color)
@@ -264,7 +264,7 @@ class Record:
         self.imagenFondo3 = pg.image.load("questapp/images/fondo3.png")
         self.fuente = pg.font.Font(FUENTE2,20)
         self.fuente2 = pg.font.Font(FUENTE2,50)
-        
+        self.bucle_pantalla()
 
     def bucle_pantalla(self):
         game_over= True
@@ -274,15 +274,15 @@ class Record:
                     game_over = False
             
             enter = pg.key.get_pressed()
-            if enter[pg.K_RETURN]:
-                return "partida"
+            if enter[pg.K_z]:
+                return "seguir"
             
 
 
             #self.pantalla_principal.fill(self.imagenFondo3,(0,0))
             texto = self.fuente2.render("Mejores Putuaciones",0,COLOR_ROJO)
             self.pantalla_principal.blit(texto,(160,100))
-            texto_continuar= self.fuente.render("Pulsa ENTER para continuar",True,COLOR_ROJO)
+            texto_continuar= self.fuente.render("Pulsa z para continuar",True,COLOR_ROJO)
             self.pantalla_principal.blit(texto_continuar,(350,600))
 
 

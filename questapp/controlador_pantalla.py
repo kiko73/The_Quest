@@ -9,13 +9,20 @@ class PantallaControlador:
        
 
     def start(self):
-        valor = self.menu.bucle_pantalla()
+            continuar_partida= "seguir"
+            valor = self.menu.bucle_pantalla()
 
-        if valor == "partida":
-            self.partida.bucle_fotograma()
-            continuar_partida = self.partida.fin_de_juego()
-            if continuar_partida !="":    
+            if valor == "partida":
+                while continuar_partida == "menu":
+                    partida = Partida()
+                    partida.bucle_fotograma()
+                    continuar_partida = self.partida.fin_de_juego()
+                       
                 record = Record()
                 record.bucle_pantalla()
+
+            
+            
+                
        
 
