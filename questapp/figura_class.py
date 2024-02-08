@@ -96,7 +96,7 @@ class Asteroide:
     def abajo(self):
         return self.pos_y + self.radio
     
-
+    """
     def comprobar_choque(self,nave):
         
         if self.izquierda <= nave.derecha and\
@@ -105,7 +105,7 @@ class Asteroide:
             self.arriba <= nave.abajo:
                 pg.mixer.Sound.play(self.sonido)
                 self.vx*= 0
-
+    """
     
             
 

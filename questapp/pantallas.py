@@ -13,7 +13,7 @@ class Partida:
         self.imagenFondo = pg.image.load("questapp/images/fondo.png")
         self.nave = Nave(10, ALTO//2 - (60//2))
         self.planeta = Planeta(ANCHO,ALTO//2)
-        self.sonido_explosion = pg.mixer.Sound("questapp/sounds/destroyer.wav")
+        self.sonido_explosion = pg.mixer.Sound("questapp/sounds/explosion.wav")
         self.asteroides = []
         
         for i in range(1,12):
@@ -30,7 +30,7 @@ class Partida:
         self.explosion1 = pg.image.load("questapp/images/explosion1.png").convert_alpha()
         self.explosion2 = pg.image.load("questapp/images/explosion2.png").convert_alpha()
         self.explosion3 = pg.image.load("questapp/images/explosion3.png").convert_alpha()
-
+        self.contadorVidas = 2
    
 
     def bucle_fotograma(self):
@@ -52,7 +52,7 @@ class Partida:
                 
             enter = pg.key.get_pressed()
             if enter[pg.K_r]:
-                return "seguir"
+                return "menu"
             
             
             self.puntuacion()
@@ -71,18 +71,23 @@ class Partida:
             for asteroides in (self.asteroides):
                 asteroides.mover()
                 asteroides.dibujarAsteroide(self.pantalla_principal)
-
+                            
                 if self.temporizador >0:
                     if asteroides.izquierda <= self.nave.derecha and\
                         asteroides.derecha >= self.nave.izquierda and\
                         asteroides.abajo >= self.nave.arriba and\
                         asteroides.arriba <= self.nave.abajo:
-                            self.game_over = False
+                            
+                            self.game_over = True
                             asteroides.vx*= 1
                             pg.mixer.Sound.set_volume(self.sonido_explosion,0.05)
                             pg.mixer.Sound.play(self.sonido_explosion)
-                            pg.time.delay(1000)
+                            
+                            self.reducir_vidas()
 
+                            if self.contadorVidas == 0:
+                                self.game_over = False
+                            
                             for i in range(3):
                                 pos_x = self.nave.pos_x - explosion_offset_x
                                 pos_y = self.nave.pos_y - explosion_offset_y
@@ -90,8 +95,7 @@ class Partida:
                             self.pantalla_principal.blit(self.explosion1, (pos_x, pos_y))
                             self.pantalla_principal.blit(self.explosion2, (pos_x, pos_y))
                             self.pantalla_principal.blit(self.explosion3, (pos_x, pos_y))
-                            pg.display.flip()
-                            pg.time.delay(1000)  
+                            pg.display.flip() 
                             self.pantalla_principal.fill(COLOR_FONDO) 
                             pg.display.flip() 
                 
@@ -123,8 +127,10 @@ class Partida:
 
         marcador1 = self.fuente2.render(str(int(self.temporizador/1000)),True,(COLOR_BLANCO))
         marcador2 = self.fuente2.render(str(int(self.contadorPuntos)),True,(COLOR_BLANCO))
+        #marcador3 = self.fuente2.render(str(int(self.contadorVidas)),True,(COLOR_BLANCO))
         self.pantalla_principal.blit(marcador1,(60,60))
         self.pantalla_principal.blit(marcador2,(210,60))
+        #self.pantalla_principal.blit(marcador3,(360,60))
 
         if self.temporizador <= 0 - 10000:
             self.contadorPuntos = False
@@ -133,8 +139,10 @@ class Partida:
     def mostrar_juego(self):
         tiempo = self.fuente.render("Tiempo",True,(COLOR_MORADO))
         punto = self.fuente.render("Puntos",True,(COLOR_MORADO))
+        #vidas = self.fuente.render("Vidas",True,(COLOR_MORADO))
         self.pantalla_principal.blit(tiempo,(20,20))
         self.pantalla_principal.blit(punto,(170,20))
+        #self.pantalla_principal.blit(vidas,(320,20))
 
     def fin_de_juego(self):
         if self.temporizador <=0 - 15000:
@@ -156,6 +164,11 @@ class Partida:
         if self.temporizador <=30000:
             self.valor_tasa = self.valor_tasa + self.valor_tasa
 
+
+    def reducir_vidas(self):
+        self.contadorVidas -= 1
+
+
     def puntuacion(self):
         multiplicador = 1
         if self.temporizador <=30000:
@@ -166,6 +179,7 @@ class Partida:
             multiplicador = 1000
 
         self.contadorPuntos += multiplicador * 1
+    
    
     def aterrizaje(self):
         if self.temporizador <= 0:
@@ -254,6 +268,7 @@ class Menu:
 class Record:
     
     def __init__(self):
+
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
         pg.display.set_caption("Puntuaciones")
         self.tasa_refresco = pg.time.Clock()
@@ -262,6 +277,7 @@ class Record:
         self.fuente2 = pg.font.Font(FUENTE2,50)
         self.bucle_pantalla()
         #self.puntajes()
+
     def bucle_pantalla(self):
         game_over= True
         while game_over:
@@ -276,7 +292,7 @@ class Record:
 
 
             #self.pantalla_principal.fill(self.imagenFondo3,(0,0))
-            texto = self.fuente2.render("Mejores Putuaciones",0,COLOR_ROJO)
+            texto = self.fuente2.render("Mejores Puntuaciones",0,COLOR_ROJO)
             self.pantalla_principal.blit(texto,(160,100))
             texto_continuar= self.fuente.render("Pulsa z para continuar",True,COLOR_ROJO)
             self.pantalla_principal.blit(texto_continuar,(350,600))
