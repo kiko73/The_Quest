@@ -2,12 +2,11 @@
 from questapp.figura_class import Asteroide,Nave,Planeta
 import random as ra
 from questapp.utils import*
-
+import sqlite3
 
 
 class Partida:
     def __init__(self):
-        
         self.pantalla_principal = pg.display.set_mode((ANCHO,ALTO))
         pg.display.set_caption("The Quest")
         self.tasa_refresco = pg.time.Clock()
@@ -31,8 +30,8 @@ class Partida:
         self.explosion1 = pg.image.load("questapp/images/explosion1.png").convert_alpha()
         self.explosion2 = pg.image.load("questapp/images/explosion2.png").convert_alpha()
         self.explosion3 = pg.image.load("questapp/images/explosion3.png").convert_alpha()
-        
-        
+
+   
 
     def bucle_fotograma(self):
         self.temporizador = TIEMPO_JUEGO
@@ -59,8 +58,7 @@ class Partida:
             self.puntuacion()
             self.velocidad_juego()
             self.fin_de_juego()
-            self.aterrizaje()
-                
+            self.aterrizaje()  
             self.pantalla_principal.fill( COLOR_FONDO)
             self.pantalla_principal.blit(self.imagenFondo,(0,0))
             self.nave.dibujar(self.pantalla_principal)
@@ -140,7 +138,6 @@ class Partida:
 
     def fin_de_juego(self):
         if self.temporizador <=0 - 15000:
-            
             self.game_over = False
             
 
@@ -151,7 +148,7 @@ class Partida:
           
             enter = pg.key.get_pressed()
             if enter[pg.K_RETURN]:
-                return "partida"
+                return "menu"
            
             
             
@@ -257,7 +254,6 @@ class Menu:
 class Record:
     
     def __init__(self):
-       
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
         pg.display.set_caption("Puntuaciones")
         self.tasa_refresco = pg.time.Clock()
@@ -265,7 +261,7 @@ class Record:
         self.fuente = pg.font.Font(FUENTE2,20)
         self.fuente2 = pg.font.Font(FUENTE2,50)
         self.bucle_pantalla()
-
+        #self.puntajes()
     def bucle_pantalla(self):
         game_over= True
         while game_over:
@@ -287,8 +283,14 @@ class Record:
 
 
             pg.display.flip()
-       
-
+    """   
+    def puntajes(self):
+        con = sqlite3.connect("data/puntuaciones.sqlite")
+        cur = con.cursor()
+        res = cur.execute("select * from records;")
+        res.fetchall()
+        res.description
+    """
 
        
 
