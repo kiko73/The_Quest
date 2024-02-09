@@ -24,20 +24,21 @@ class Partida:
         self.fuente3 = pg.font.Font(FUENTE1,80)
         self.contadorTiempo = 0
         self.contadorPuntos = 0
+        self.contadorVidas = 3
         self.temporizador = TIEMPO_JUEGO
         self.game_over = True
         self.aparecer_planeta = False
         self.explosion1 = pg.image.load("questapp/images/explosion1.png").convert_alpha()
         self.explosion2 = pg.image.load("questapp/images/explosion2.png").convert_alpha()
         self.explosion3 = pg.image.load("questapp/images/explosion3.png").convert_alpha()
-        self.vidas = 3
+        
         
     
 
     def bucle_fotograma(self):
         self.temporizador = TIEMPO_JUEGO
         self.tasa_refresco.tick()
-        self.contadorVidas = 3
+        
 
         explosion_offset_x = 0
         explosion_offset_y = 0
@@ -57,6 +58,7 @@ class Partida:
                 return "menu"
             
             
+            
             self.puntuacion()
             self.velocidad_juego()
             self.fin_de_juego()
@@ -70,6 +72,8 @@ class Partida:
             self.mostrar_texto(pg)
             
             
+                 
+            
             for asteroides in (self.asteroides):
                 asteroides.mover()
                 asteroides.dibujarAsteroide(self.pantalla_principal)
@@ -81,9 +85,12 @@ class Partida:
                             asteroides.derecha >= self.nave.izquierda and\
                             asteroides.abajo >= self.nave.arriba and\
                             asteroides.arriba <= self.nave.abajo:
+                        
                         self.contadorVidas -= 1
+                        
+                        
                         asteroides.vx*= 1
-                    
+                        
 
                         pg.mixer.Sound.set_volume(self.sonido_explosion,0.05)
                         pg.mixer.Sound.play(self.sonido_explosion)
@@ -99,10 +106,10 @@ class Partida:
                             pg.display.flip() 
                             self.pantalla_principal.fill(COLOR_FONDO) 
                             pg.display.flip() 
-
             
-            if self.contadorVidas == 0:
-                self.game_over = False    
+            if self.contadorVidas <= 0:
+                self.game_over = False               
+                      
                            
             if self.aparecer_planeta:
                 if self.planeta.pos_x > ANCHO:
@@ -120,12 +127,7 @@ class Partida:
             
             pg.display.flip()
 
-            
-
-            
-
-        
-            
+         
 
     def mostrar_marcador(self):
 
@@ -169,7 +171,7 @@ class Partida:
             self.valor_tasa = self.valor_tasa + self.valor_tasa
 
 
-
+   
     def puntuacion(self):
         multiplicador = 1
         if self.temporizador <=30000:

@@ -27,7 +27,16 @@ class PantallaControlador:
                     
                     menu=Menu()
                     menu.bucle_pantalla()
+                            
+        
+                    
+                       
+                         
+                    
 
+                   
+                    
+                   
            
 
             
