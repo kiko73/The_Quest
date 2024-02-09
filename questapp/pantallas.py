@@ -13,7 +13,7 @@ class Partida:
         self.imagenFondo = pg.image.load("questapp/images/fondo.png")
         self.nave = Nave(10, ALTO//2 - (60//2))
         self.planeta = Planeta(ANCHO,ALTO//2)
-        self.sonido_explosion = pg.mixer.Sound("questapp/sounds/explosion.wav")
+        self.sonido_explosion = pg.mixer.Sound("questapp/sounds/destroyer.wav")
         self.asteroides = []
         
         for i in range(1,12):
@@ -30,12 +30,14 @@ class Partida:
         self.explosion1 = pg.image.load("questapp/images/explosion1.png").convert_alpha()
         self.explosion2 = pg.image.load("questapp/images/explosion2.png").convert_alpha()
         self.explosion3 = pg.image.load("questapp/images/explosion3.png").convert_alpha()
-        self.contadorVidas = 2
-   
+        self.vidas = 3
+        
+    
 
     def bucle_fotograma(self):
         self.temporizador = TIEMPO_JUEGO
         self.tasa_refresco.tick()
+        self.contadorVidas = 3
 
         explosion_offset_x = 0
         explosion_offset_y = 0
@@ -44,7 +46,7 @@ class Partida:
           
             self.valor_tasa = self.tasa_refresco.tick(600)
             self.temporizador = self.temporizador - self.valor_tasa
-
+            
             if self.game_over:
                 for evento in pg.event.get():
                     if evento.type == pg.QUIT:
@@ -71,26 +73,25 @@ class Partida:
             for asteroides in (self.asteroides):
                 asteroides.mover()
                 asteroides.dibujarAsteroide(self.pantalla_principal)
-                            
+
+                        
+                
                 if self.temporizador >0:
                     if asteroides.izquierda <= self.nave.derecha and\
-                        asteroides.derecha >= self.nave.izquierda and\
-                        asteroides.abajo >= self.nave.arriba and\
-                        asteroides.arriba <= self.nave.abajo:
-                            
-                            self.game_over = True
-                            asteroides.vx*= 1
-                            pg.mixer.Sound.set_volume(self.sonido_explosion,0.05)
-                            pg.mixer.Sound.play(self.sonido_explosion)
-                            
-                            self.reducir_vidas()
+                            asteroides.derecha >= self.nave.izquierda and\
+                            asteroides.abajo >= self.nave.arriba and\
+                            asteroides.arriba <= self.nave.abajo:
+                        self.contadorVidas -= 1
+                        asteroides.vx*= 1
+                    
 
-                            if self.contadorVidas == 0:
-                                self.game_over = False
+                        pg.mixer.Sound.set_volume(self.sonido_explosion,0.05)
+                        pg.mixer.Sound.play(self.sonido_explosion)
+                            #pg.time.delay(5000)
                             
-                            for i in range(3):
-                                pos_x = self.nave.pos_x - explosion_offset_x
-                                pos_y = self.nave.pos_y - explosion_offset_y
+                        for i in range(3):
+                            pos_x = self.nave.pos_x - explosion_offset_x
+                            pos_y = self.nave.pos_y - explosion_offset_y
                                 
                             self.pantalla_principal.blit(self.explosion1, (pos_x, pos_y))
                             self.pantalla_principal.blit(self.explosion2, (pos_x, pos_y))
@@ -98,8 +99,11 @@ class Partida:
                             pg.display.flip() 
                             self.pantalla_principal.fill(COLOR_FONDO) 
                             pg.display.flip() 
-                
-                            
+
+            
+            if self.contadorVidas == 0:
+                self.game_over = False    
+                           
             if self.aparecer_planeta:
                 if self.planeta.pos_x > ANCHO:
                     self.planeta.pos_x -= 0.5
@@ -108,29 +112,29 @@ class Partida:
                 self.aparecer_planeta = True
                                     
             
-           
+            
             self.nave.mover(pg.K_UP,pg.K_DOWN)
             self.planeta.mover()
 
             
             
             pg.display.flip()
-   
-         
+
+            
+
+            
 
         
-
-    
-        
+            
 
     def mostrar_marcador(self):
 
         marcador1 = self.fuente2.render(str(int(self.temporizador/1000)),True,(COLOR_BLANCO))
         marcador2 = self.fuente2.render(str(int(self.contadorPuntos)),True,(COLOR_BLANCO))
-        #marcador3 = self.fuente2.render(str(int(self.contadorVidas)),True,(COLOR_BLANCO))
         self.pantalla_principal.blit(marcador1,(60,60))
         self.pantalla_principal.blit(marcador2,(210,60))
-        #self.pantalla_principal.blit(marcador3,(360,60))
+        marcador3 = self.fuente2.render(str(int(self.contadorVidas)),True,(COLOR_BLANCO))
+        self.pantalla_principal.blit(marcador3,(360,60))
 
         if self.temporizador <= 0 - 10000:
             self.contadorPuntos = False
@@ -139,10 +143,10 @@ class Partida:
     def mostrar_juego(self):
         tiempo = self.fuente.render("Tiempo",True,(COLOR_MORADO))
         punto = self.fuente.render("Puntos",True,(COLOR_MORADO))
-        #vidas = self.fuente.render("Vidas",True,(COLOR_MORADO))
+        vidas = self.fuente.render("Vidas",True,(COLOR_MORADO))
         self.pantalla_principal.blit(tiempo,(20,20))
         self.pantalla_principal.blit(punto,(170,20))
-        #self.pantalla_principal.blit(vidas,(320,20))
+        self.pantalla_principal.blit(vidas,(320,20))
 
     def fin_de_juego(self):
         if self.temporizador <=0 - 15000:
@@ -153,20 +157,17 @@ class Partida:
         if self.temporizador <= 0 - 10000:
             texto_continuar = self.fuente3.render("Pulsa r para continuar",True,COLOR_ROJO)
             self.pantalla_principal.blit(texto_continuar,(10,300))
-          
+        
             enter = pg.key.get_pressed()
             if enter[pg.K_RETURN]:
                 return "menu"
-           
+        
             
             
     def velocidad_juego(self):
         if self.temporizador <=30000:
             self.valor_tasa = self.valor_tasa + self.valor_tasa
 
-
-    def reducir_vidas(self):
-        self.contadorVidas -= 1
 
 
     def puntuacion(self):
@@ -180,7 +181,7 @@ class Partida:
 
         self.contadorPuntos += multiplicador * 1
     
-   
+
     def aterrizaje(self):
         if self.temporizador <= 0:
             centro_x = 920
