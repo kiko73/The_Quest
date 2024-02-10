@@ -3,7 +3,7 @@ from questapp.figura_class import Asteroide,Nave,Planeta
 import random as ra
 from questapp.utils import*
 import sqlite3
-
+import pygame_gui
 
 class Partida:
     def __init__(self):
@@ -21,7 +21,7 @@ class Partida:
 
         self.fuente = pg.font.Font(FUENTE1,30)
         self.fuente2 = pg.font.Font(FUENTE2,20)
-        self.fuente3 = pg.font.Font(FUENTE1,80)
+        self.fuente3 = pg.font.Font(FUENTE1,45)
         self.contadorTiempo = 0
         self.contadorPuntos = 0
         self.contadorVidas = 3
@@ -31,7 +31,7 @@ class Partida:
         self.explosion1 = pg.image.load("questapp/images/explosion1.png").convert_alpha()
         self.explosion2 = pg.image.load("questapp/images/explosion2.png").convert_alpha()
         self.explosion3 = pg.image.load("questapp/images/explosion3.png").convert_alpha()
-        
+        self.puntos_hasta_ahora = 0
         
     
 
@@ -48,10 +48,15 @@ class Partida:
             self.valor_tasa = self.tasa_refresco.tick(600)
             self.temporizador = self.temporizador - self.valor_tasa
             
-            if self.game_over:
-                for evento in pg.event.get():
-                    if evento.type == pg.QUIT:
-                        self.game_over = False
+            
+            for evento in pg.event.get():
+                if evento.type == pg.QUIT:
+                    self.game_over = False
+                if evento.type == pg.KEYDOWN:
+                    if evento.key == pg.K_r:
+                        return "menu"
+                    elif evento.key == pg.K_RETURN:
+                        return "menu"
                 
             enter = pg.key.get_pressed()
             if enter[pg.K_r]:
@@ -118,7 +123,11 @@ class Partida:
             if self.temporizador <= 0:
                 self.aparecer_planeta = True
                                     
-            
+            if self.temporizador <= 0 - 10000:
+                marcador2 = self.fuente2.render(str(int(self.puntos_hasta_ahora)), True,(COLOR_BLANCO))
+            else:
+                marcador2 = self.fuente2.render(str(int(self.contadorPuntos)),True,(COLOR_BLANCO))
+                self.pantalla_principal.blit(marcador2, (210,60))
             
             self.nave.mover(pg.K_UP,pg.K_DOWN)
             self.planeta.mover()
@@ -132,14 +141,16 @@ class Partida:
     def mostrar_marcador(self):
 
         marcador1 = self.fuente2.render(str(int(self.temporizador/1000)),True,(COLOR_BLANCO))
-        marcador2 = self.fuente2.render(str(int(self.contadorPuntos)),True,(COLOR_BLANCO))
+        if self.temporizador <= - 10000:
+            marcador2 = self.fuente2.render(str(int(self.puntos_hasta_ahora)),True,(COLOR_BLANCO))
+        else:
+            marcador2 = self.fuente2.render(str(int(self.contadorPuntos)),True,(COLOR_BLANCO))
         self.pantalla_principal.blit(marcador1,(60,60))
         self.pantalla_principal.blit(marcador2,(210,60))
         marcador3 = self.fuente2.render(str(int(self.contadorVidas)),True,(COLOR_BLANCO))
         self.pantalla_principal.blit(marcador3,(360,60))
 
-        if self.temporizador <= 0 - 10000:
-            self.contadorPuntos = False
+        
             
 
     def mostrar_juego(self):
@@ -153,26 +164,11 @@ class Partida:
     def fin_de_juego(self):
         if self.temporizador <=0 - 15000:
             self.game_over = False
-            
 
-    def mostrar_texto(self,pg):
-        if self.temporizador <= 0 - 10000:
-            texto_continuar = self.fuente3.render("Pulsa r para continuar",True,COLOR_ROJO)
-            self.pantalla_principal.blit(texto_continuar,(10,300))
-        
-            enter = pg.key.get_pressed()
-            if enter[pg.K_RETURN]:
-                return "menu"
-        
-            
-            
-    def velocidad_juego(self):
-        if self.temporizador <=30000:
-            self.valor_tasa = self.valor_tasa + self.valor_tasa
-
-
-   
     def puntuacion(self):
+        if self.temporizador <= -10000:
+            self.puntos_hasta_ahora = self.contadorPuntos
+      
         multiplicador = 1
         if self.temporizador <=30000:
             multiplicador = 2
@@ -181,8 +177,21 @@ class Partida:
         if self.temporizador < 0:
             multiplicador = 1000
 
-        self.contadorPuntos += multiplicador * 1
-    
+        if self.temporizador > -10000:
+            self.contadorPuntos += multiplicador * 1       
+
+    def mostrar_texto(self,pg):
+        if self.temporizador <= 0 - 10000:
+            texto_continuar = self.fuente3.render("Felicidades por el aterrizaje, pulsa r para continuar",True,COLOR_ROJO)
+            self.pantalla_principal.blit(texto_continuar,(10,300))
+            texto_puntuacion = self.fuente.render(f"Tu puntuación es: {self.puntos_hasta_ahora}", True, COLOR_ROJO)
+            texto_rect = texto_puntuacion.get_rect(center=(600,400))
+            self.pantalla_principal.blit(texto_puntuacion, texto_rect)    
+            
+    def velocidad_juego(self):
+        if self.temporizador <=30000:
+            self.valor_tasa = self.valor_tasa + self.valor_tasa
+
 
     def aterrizaje(self):
         if self.temporizador <= 0:
@@ -243,9 +252,11 @@ class Menu:
 
             enter = pg.key.get_pressed()
             if enter[pg.K_RETURN]:
-                #game_over = False
                 pg.mixer.Sound.stop(self.sonido)
                 return "partida"
+            
+            elif enter[pg.K_ESCAPE]:
+                return "salir"
 
 
 
@@ -261,7 +272,7 @@ class Menu:
             self.mostrar_texto("mas puntos recibiras. Mueve la nave hacia arriba y abajo con el cursor y pasa de nivel, pero ¡cuidado!, porqué por",self.fuente2,COLOR_AMARILLO,(10,390))
             self.mostrar_texto("cada nivel que superes, aumentaran el número de asteroides y su velocidad. Si aterrizas sin percances , recibiras",self.fuente2,COLOR_AMARILLO,(10,420))
             self.mostrar_texto("un extra de puntos. Suerte y recuerda que el futuro de la humanidad depende de ti.",self.fuente2,COLOR_AMARILLO,(10,450))
-
+            self.mostrar_texto("Pulsa ESC para salir",self.fuente,COLOR_ROJO,(130,640))
 
            
 
@@ -271,45 +282,83 @@ class Menu:
 class Record:
     
     def __init__(self):
-
+        #self.h = 500
+        #self.w = 1200
+        #self.manager = pygame_gui.UIManager((self.w,self.h))
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
         pg.display.set_caption("Puntuaciones")
         self.tasa_refresco = pg.time.Clock()
-        self.imagenFondo3 = pg.image.load("questapp/images/fondo3.png")
+        self.imagenFondo2 = pg.image.load("questapp/images/fondo2.png")
         self.fuente = pg.font.Font(FUENTE2,20)
         self.fuente2 = pg.font.Font(FUENTE2,50)
         self.bucle_pantalla()
         #self.puntajes()
+        #self.text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pg.Rect((350,275),(900,50)),manager=self.manager,object_id="#main_text_entry")
+        self.bucle_pantalla()
+        #self.show_text()
+    """
+    def show_text(self,text_to_show):
+        game_over= True
+        while game_over:
+            for evento in pg.event.get():
+                if evento.type == pg.QUIT:
+                    game_over = False
 
+
+
+            #self.pantalla_principal.fill(self.imagenFondo2,(0,0))
+            texto = self.fuente2.render("Mejores Puntuaciones",0,COLOR_ROJO)
+            self.pantalla_principal.blit(texto,(160,100))
+            texto_continuar= self.fuente.render("Pulsa z para continuar",True,COLOR_ROJO)
+            self.pantalla_principal.blit(texto_continuar,(350,600))
+            new_text = pg.font.SysFont("aleluya", 100).render(f"Hello,{text_to_show}",True,"white")
+            new_text_rect = new_text.get_rect(center= (ALTO/2,ANCHO/2))
+            self.pantalla_principal(new_text, new_text_rect)
+            self.tasa_refresco.tick(60)
+
+
+            pg.display.flip()
+
+    """
+    
+    
+    
     def bucle_pantalla(self):
         game_over= True
         while game_over:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     game_over = False
+                """
+                if evento.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and evento.ui_object_id == "#main_text_entry":
+                    self.show_text(evento.text)
+                self.manager.process_events(evento)
+
             
+            self.manager.draw_ui(self.pantalla_principal)
+            """
+
             enter = pg.key.get_pressed()
             if enter[pg.K_z]:
                 return "seguir"
             
 
 
-            #self.pantalla_principal.fill(self.imagenFondo3,(0,0))
+            #self.pantalla_principal.fill(self.imagenFondo2,(0,0))
             texto = self.fuente2.render("Mejores Puntuaciones",0,COLOR_ROJO)
             self.pantalla_principal.blit(texto,(160,100))
             texto_continuar= self.fuente.render("Pulsa z para continuar",True,COLOR_ROJO)
             self.pantalla_principal.blit(texto_continuar,(350,600))
 
-
             pg.display.flip()
-    """   
+    """
     def puntajes(self):
         con = sqlite3.connect("data/puntuaciones.sqlite")
         cur = con.cursor()
-        res = cur.execute("select * from records;")
+        res = cur.execute("select * from Records;")
         res.fetchall()
-        res.description
-    """
+    """ 
+
 
        
 
