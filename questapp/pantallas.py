@@ -32,7 +32,15 @@ class Partida:
         self.explosion2 = pg.image.load("questapp/images/explosion2.png").convert_alpha()
         self.explosion3 = pg.image.load("questapp/images/explosion3.png").convert_alpha()
         self.puntos_hasta_ahora = 0
-        
+        self.record = Record()
+
+    def finalizar_partida(self, nombre_jugador, puntuacion_jugador):
+        if isinstance(nombre_jugador, str) and isinstance(puntuacion_jugador, (int, float)):
+            con = sqlite3.connect("data/puntuacione.sqlite")
+            self.record.guardar_puntuacion(nombre_jugador,puntuacion_jugador)
+            con.close()
+        else:
+            print("Error:El nombre del jugador debe ser una cadena y la puntuacion debe ser un numero")
     
 
     def bucle_fotograma(self):
@@ -99,7 +107,7 @@ class Partida:
 
                         pg.mixer.Sound.set_volume(self.sonido_explosion,0.05)
                         pg.mixer.Sound.play(self.sonido_explosion)
-                            #pg.time.delay(5000)
+                            
                             
                         for i in range(3):
                             pos_x = self.nave.pos_x - explosion_offset_x
@@ -136,7 +144,7 @@ class Partida:
             
             pg.display.flip()
 
-         
+        
 
     def mostrar_marcador(self):
 
@@ -182,6 +190,10 @@ class Partida:
 
     def mostrar_texto(self,pg):
         if self.temporizador <= 0 - 10000:
+            nombre_jugador = "kiko"
+            puntuacion_jugador = self.puntos_hasta_ahora
+            self.finalizar_partida(nombre_jugador,puntuacion_jugador)
+            self.record.guardar_puntuacion(nombre_jugador,puntuacion_jugador)
             texto_continuar = self.fuente3.render("Felicidades por el aterrizaje, pulsa r para continuar",True,COLOR_ROJO)
             self.pantalla_principal.blit(texto_continuar,(10,300))
             texto_puntuacion = self.fuente.render(f"Tu puntuación es: {self.puntos_hasta_ahora}", True, COLOR_ROJO)
@@ -291,11 +303,62 @@ class Record:
         self.imagenFondo2 = pg.image.load("questapp/images/fondo2.png")
         self.fuente = pg.font.Font(FUENTE2,20)
         self.fuente2 = pg.font.Font(FUENTE2,50)
+        self.puntuaciones = self.obtener_puntuaciones()
         self.bucle_pantalla()
         #self.puntajes()
         #self.text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pg.Rect((350,275),(900,50)),manager=self.manager,object_id="#main_text_entry")
         self.bucle_pantalla()
         #self.show_text()
+       
+
+    def bucle_pantalla(self):
+        game_over= True
+        while game_over:
+            for evento in pg.event.get():
+                if evento.type == pg.QUIT:
+                    game_over = False
+                """
+                if evento.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and evento.ui_object_id == "#main_text_entry":
+                    self.show_text(evento.text)
+                self.manager.process_events(evento)
+
+            
+            self.manager.draw_ui(self.pantalla_principal)
+            """
+            puntuaciones = self.obtener_puntuaciones()
+
+            y_pos = 200 
+            for idx, (nombre, puntuacion) in enumerate(puntuaciones, start=1):
+                texto_puntuacion = self.fuente.render(f"{idx}. {nombre}: {puntuacion}", True, COLOR_BLANCO)
+                self.pantalla_principal.blit(texto_puntuacion, (100, y_pos))
+                y_pos += 50  
+
+
+
+            enter = pg.key.get_pressed()
+            if enter[pg.K_z]:
+                return "seguir"
+            
+
+
+            #self.pantalla_principal.fill(self.imagenFondo2,(0,0))
+            texto = self.fuente2.render("Mejores Puntuaciones",0,COLOR_ROJO)
+            self.pantalla_principal.blit(texto,(160,100))
+            texto_continuar= self.fuente.render("Pulsa z para continuar",True,COLOR_ROJO)
+            self.pantalla_principal.blit(texto_continuar,(350,600))
+
+            pg.display.flip()
+
+    def obtener_puntuaciones(self):
+        con = sqlite3.connect("data/puntuacione.sqlite")
+        cur = con.cursor()
+        cur.execute("select nombre, puntos from Records ORDER BY puntos DESC LIMIT 3;")
+        puntuaciones=cur.fetchall()
+        con.close()
+        return puntuaciones
+       
+        
+   
     """
     def show_text(self,text_to_show):
         game_over= True
@@ -320,44 +383,50 @@ class Record:
             pg.display.flip()
 
     """
-    
-    
-    
-    def bucle_pantalla(self):
-        game_over= True
+    def guardar_puntuacion(self,nombre_jugador,puntuacion_jugador):
+        con = sqlite3.connect("data/puntuacione.sqlite")
+        cur = con.cursor()
+        cur.execute("INSERT INTO records(nombre, puntos) VALUES (?, ?);", (nombre_jugador, puntuacion_jugador))
+        con.commit()
+        con.close()
+        
+
+
+  
+    def mostrar_puntuaciones(self):
+        game_over = True
         while game_over:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     game_over = False
-                """
-                if evento.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and evento.ui_object_id == "#main_text_entry":
-                    self.show_text(evento.text)
-                self.manager.process_events(evento)
-
-            
-            self.manager.draw_ui(self.pantalla_principal)
-            """
 
             enter = pg.key.get_pressed()
             if enter[pg.K_z]:
                 return "seguir"
-            
 
+            self.pantalla_principal.blit(self.imagenFondo2, (0, 0))
+            texto = self.fuente2.render("Mejores Puntuaciones", 0, COLOR_ROJO)
+            self.pantalla_principal.blit(texto, (160, 100))
+            texto_continuar = self.fuente.render("Pulsa z para continuar", True, COLOR_ROJO)
+            self.pantalla_principal.blit(texto_continuar, (350, 600))
 
-            #self.pantalla_principal.fill(self.imagenFondo2,(0,0))
-            texto = self.fuente2.render("Mejores Puntuaciones",0,COLOR_ROJO)
-            self.pantalla_principal.blit(texto,(160,100))
-            texto_continuar= self.fuente.render("Pulsa z para continuar",True,COLOR_ROJO)
-            self.pantalla_principal.blit(texto_continuar,(350,600))
+           
+            y_offset = 200
+            for i, puntuacion in enumerate(self.puntuaciones, start=1):
+                texto_puntuacion = self.fuente.render(f"{i}. {puntuacion[0]}: {puntuacion[1]}", True, COLOR_BLANCO)
+                self.pantalla_principal.blit(texto_puntuacion, (200, y_offset))
+                y_offset += 30
 
             pg.display.flip()
-    """
-    def puntajes(self):
-        con = sqlite3.connect("data/puntuaciones.sqlite")
-        cur = con.cursor()
-        res = cur.execute("select * from Records;")
-        res.fetchall()
-    """ 
+
+        record = Record()
+        record.mostrar_puntuaciones()
+
+
+
+
+    
+    
 
 
        
