@@ -18,7 +18,7 @@ class Nave:
         
    
     def dibujar(self,surface):
-        surface.blit(self.nave,(self.pos_x-(self.w//2 - 40),self.pos_y-(self.h//2)))
+        surface.blit(self.nave,(self.pos_x-(self.w//2 - 40),self.pos_y-(self.h//4)))
 
     def mover(self,teclado_arriba,teclado_abajo):
         estado_teclado = pg.key.get_pressed()
@@ -26,7 +26,7 @@ class Nave:
         if estado_teclado[teclado_arriba] == True and self.pos_y >= 0<=(self.h):
             self.pos_y -= 2
         
-        if estado_teclado[teclado_abajo] == True and self.pos_y <= 700-(self.h):
+        if estado_teclado[teclado_abajo] == True and self.pos_y <= 700-(self.h//2):
             self.pos_y += 2
 
     def rotar(self,grados_por_paso):
@@ -101,7 +101,7 @@ class Asteroide:
             
 
 class Planeta():
-    def __init__(self,pos_x,pos_y,color=COLOR_AMARILLO,w=300,h=300,radio=300,vx=1):
+    def __init__(self,pos_x,pos_y,color=COLOR_AMARILLO ,w=300,h=300,radio=300,vx=1):
         self.pos_x = pos_x + 300
         self.pos_y = pos_y
         self.color = color

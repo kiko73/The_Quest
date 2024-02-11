@@ -3,7 +3,7 @@ from questapp.figura_class import Asteroide,Nave,Planeta
 import random as ra
 from questapp.utils import*
 import sqlite3
-import pygame_gui
+
 
 class Partida:
     def __init__(self):
@@ -95,28 +95,29 @@ class Partida:
                 
                 if self.temporizador >0:
                     if asteroides.izquierda <= self.nave.derecha and\
-                            asteroides.derecha >= self.nave.izquierda and\
-                            asteroides.abajo >= self.nave.arriba and\
-                            asteroides.arriba <= self.nave.abajo:
+                        asteroides.derecha >= self.nave.izquierda and\
+                        asteroides.abajo >= self.nave.arriba and\
+                        asteroides.arriba <= self.nave.abajo:
                         
-                        self.contadorVidas -= 1
-                        
-                        
-                        asteroides.vx*= 1
-                        
+                            self.contadorVidas -= 1
+                            self.game_over = False
+                            
+                            asteroides.vx*= 1
+                            
 
-                        pg.mixer.Sound.set_volume(self.sonido_explosion,0.05)
-                        pg.mixer.Sound.play(self.sonido_explosion)
-                            
-                            
-                        for i in range(3):
-                            pos_x = self.nave.pos_x - explosion_offset_x
-                            pos_y = self.nave.pos_y - explosion_offset_y
+                            pg.mixer.Sound.set_volume(self.sonido_explosion,0.05)
+                            pg.mixer.Sound.play(self.sonido_explosion)
+                            pg.time.delay(2000)  
+                                
+                            for i in range(3):
+                                pos_x = self.nave.pos_x - explosion_offset_x
+                                pos_y = self.nave.pos_y - explosion_offset_y
                                 
                             self.pantalla_principal.blit(self.explosion1, (pos_x, pos_y))
                             self.pantalla_principal.blit(self.explosion2, (pos_x, pos_y))
                             self.pantalla_principal.blit(self.explosion3, (pos_x, pos_y))
-                            pg.display.flip() 
+                            pg.display.flip()
+                            pg.time.delay(2000) 
                             self.pantalla_principal.fill(COLOR_FONDO) 
                             pg.display.flip() 
             
@@ -143,6 +144,8 @@ class Partida:
             
             
             pg.display.flip()
+
+  
 
         
 
@@ -181,9 +184,9 @@ class Partida:
         if self.temporizador <=30000:
             multiplicador = 2
         if self.temporizador <=15000:
-            multiplicador = 4
+            multiplicador = 3
         if self.temporizador < 0:
-            multiplicador = 1000
+            multiplicador = 10
 
         if self.temporizador > -10000:
             self.contadorPuntos += multiplicador * 1       
@@ -198,8 +201,11 @@ class Partida:
             self.pantalla_principal.blit(texto_continuar,(10,300))
             texto_puntuacion = self.fuente.render(f"Tu puntuación es: {self.puntos_hasta_ahora}", True, COLOR_ROJO)
             texto_rect = texto_puntuacion.get_rect(center=(600,400))
-            self.pantalla_principal.blit(texto_puntuacion, texto_rect)    
-            
+            self.pantalla_principal.blit(texto_puntuacion, texto_rect)
+            if self.temporizador <= 0 -15000:
+                self.record.bucle_pantalla()
+
+
     def velocidad_juego(self):
         if self.temporizador <=30000:
             self.valor_tasa = self.valor_tasa + self.valor_tasa
@@ -262,12 +268,11 @@ class Menu:
                 if evento.type == pg.QUIT:
                     game_over = False
 
-            enter = pg.key.get_pressed()
-            if enter[pg.K_RETURN]:
+            keys = pg.key.get_pressed()
+            if keys[pg.K_RETURN]:
                 pg.mixer.Sound.stop(self.sonido)
                 return "partida"
-            
-            elif enter[pg.K_ESCAPE]:
+            elif keys[pg.K_ESCAPE]:
                 return "salir"
 
 
@@ -294,9 +299,6 @@ class Menu:
 class Record:
     
     def __init__(self):
-        #self.h = 500
-        #self.w = 1200
-        #self.manager = pygame_gui.UIManager((self.w,self.h))
         self.pantalla_principal = pg.display.set_mode( (ANCHO,ALTO) )
         pg.display.set_caption("Puntuaciones")
         self.tasa_refresco = pg.time.Clock()
@@ -306,9 +308,8 @@ class Record:
         self.puntuaciones = self.obtener_puntuaciones()
         self.bucle_pantalla()
         #self.puntajes()
-        #self.text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pg.Rect((350,275),(900,50)),manager=self.manager,object_id="#main_text_entry")
         self.bucle_pantalla()
-        #self.show_text()
+      
        
 
     def bucle_pantalla(self):
@@ -317,27 +318,22 @@ class Record:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     game_over = False
-                """
-                if evento.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and evento.ui_object_id == "#main_text_entry":
-                    self.show_text(evento.text)
-                self.manager.process_events(evento)
-
-            
-            self.manager.draw_ui(self.pantalla_principal)
-            """
-            puntuaciones = self.obtener_puntuaciones()
+             
+            self.puntuaciones = self.obtener_puntuaciones()
 
             y_pos = 200 
-            for idx, (nombre, puntuacion) in enumerate(puntuaciones, start=1):
+            for idx, (nombre, puntuacion) in enumerate(self.puntuaciones, start=1):
                 texto_puntuacion = self.fuente.render(f"{idx}. {nombre}: {puntuacion}", True, COLOR_BLANCO)
                 self.pantalla_principal.blit(texto_puntuacion, (100, y_pos))
                 y_pos += 50  
 
 
 
-            enter = pg.key.get_pressed()
-            if enter[pg.K_z]:
+            keys = pg.key.get_pressed()
+            if keys[pg.K_z]:
                 return "seguir"
+            elif keys[pg.K_ESCAPE]:
+                return "salir"
             
 
 
@@ -346,43 +342,25 @@ class Record:
             self.pantalla_principal.blit(texto,(160,100))
             texto_continuar= self.fuente.render("Pulsa z para continuar",True,COLOR_ROJO)
             self.pantalla_principal.blit(texto_continuar,(350,600))
+            texto_continuar= self.fuente.render("Pulsa Esc para salir",True,COLOR_ROJO)
+            self.pantalla_principal.blit(texto_continuar,(350,650))
 
             pg.display.flip()
 
     def obtener_puntuaciones(self):
         con = sqlite3.connect("data/puntuacione.sqlite")
         cur = con.cursor()
-        cur.execute("select nombre, puntos from Records ORDER BY puntos DESC LIMIT 3;")
-        puntuaciones=cur.fetchall()
+        cur.execute("select nombre, puntos from Records ORDER BY puntos DESC LIMIT 1;")
+        primera_puntuacion=cur.fetchone()
+        cur.execute("SELECT nombre, puntos FROM Records WHERE puntos != ? ORDER BY puntos DESC LIMIT 2;", (primera_puntuacion[1],))
+        siguientes_puntuaciones = cur.fetchall()
+        puntuaciones = [primera_puntuacion] + siguientes_puntuaciones
         con.close()
         return puntuaciones
        
         
    
-    """
-    def show_text(self,text_to_show):
-        game_over= True
-        while game_over:
-            for evento in pg.event.get():
-                if evento.type == pg.QUIT:
-                    game_over = False
-
-
-
-            #self.pantalla_principal.fill(self.imagenFondo2,(0,0))
-            texto = self.fuente2.render("Mejores Puntuaciones",0,COLOR_ROJO)
-            self.pantalla_principal.blit(texto,(160,100))
-            texto_continuar= self.fuente.render("Pulsa z para continuar",True,COLOR_ROJO)
-            self.pantalla_principal.blit(texto_continuar,(350,600))
-            new_text = pg.font.SysFont("aleluya", 100).render(f"Hello,{text_to_show}",True,"white")
-            new_text_rect = new_text.get_rect(center= (ALTO/2,ANCHO/2))
-            self.pantalla_principal(new_text, new_text_rect)
-            self.tasa_refresco.tick(60)
-
-
-            pg.display.flip()
-
-    """
+   
     def guardar_puntuacion(self,nombre_jugador,puntuacion_jugador):
         con = sqlite3.connect("data/puntuacione.sqlite")
         cur = con.cursor()
